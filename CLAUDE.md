@@ -22,7 +22,7 @@ Whenever the user asks to plan a feature, create a PRD, design an architecture, 
 
 - `packages/core`: Shared TypeScript types, schemas (Zod), and constants.
 - `packages/fs`: Filesystem layer for reading/writing Markdown plans, `.plannic/config.md`, `.docs/.history/*.jsonl`, and Fuse.js search.
-- `apps/mcp-server`: MCP server exposing 7 stdio tools (`get_config`, `init_plan`, `get_plan`, `update_document`, `list_plans`, `search_plans`, `get_history`).
+- `apps/mcp-server`: MCP server exposing 8 stdio tools (`get_config`, `init_plan`, `get_plan`, `update_document`, `move_task`, `list_plans`, `search_plans`, `get_history`).
 - `apps/desktop`: Tauri v2 + Svelte 5 desktop application (dark theme, Geist typography, three-column workbench).
 
 ---

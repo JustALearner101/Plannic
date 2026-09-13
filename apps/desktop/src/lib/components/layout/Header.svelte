@@ -33,7 +33,11 @@
     }
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'g') {
       e.preventDefault();
-      graphStore.toggleViewMode();
+      uiStore.setMainView(uiStore.mainView === 'graph' ? 'documents' : 'graph');
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
+      e.preventDefault();
+      uiStore.setMainView(uiStore.mainView === 'board' ? 'documents' : 'board');
     }
   }
 </script>
@@ -93,21 +97,30 @@
     <div class="view-mode-switcher">
       <button
         class="mode-btn"
-        class:active={graphStore.viewMode === 'documents'}
-        onclick={() => graphStore.setViewMode('documents')}
-        title="Document View (Ctrl+G)"
+        class:active={uiStore.mainView === 'documents'}
+        onclick={() => uiStore.setMainView('documents')}
+        title="Document View"
       >
         <span class="mode-icon">📄</span>
         <span class="mode-text">Docs</span>
       </button>
       <button
         class="mode-btn"
-        class:active={graphStore.viewMode === 'graph'}
-        onclick={() => graphStore.setViewMode('graph')}
+        class:active={uiStore.mainView === 'graph'}
+        onclick={() => uiStore.setMainView('graph')}
         title="Node Graph View (Ctrl+G)"
       >
         <span class="mode-icon">◈</span>
         <span class="mode-text">Graph</span>
+      </button>
+      <button
+        class="mode-btn"
+        class:active={uiStore.mainView === 'board'}
+        onclick={() => uiStore.setMainView('board')}
+        title="Interactive Kanban Board (Ctrl+B)"
+      >
+        <span class="mode-icon">⊞</span>
+        <span class="mode-text">Board</span>
       </button>
     </div>
   </div>

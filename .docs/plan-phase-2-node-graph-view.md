@@ -4,19 +4,14 @@ plan: phase-2-node-graph-view
 type: plan
 name: Phase 2 Node Graph View
 slug: phase-2-node-graph-view
-version: '1.1'
+version: 1.2
 status: draft
-created: '2026-09-13T10:11:36.485Z'
-lastUpdated: '2026-09-13T10:49:29.479Z'
+created: 2026-09-13T10:11:36.485Z
+lastUpdated: 2026-09-13T12:05:13.959Z
 tags: []
 description: Phase 2 Node Graph View for Phase 2 Node Graph View
 mode: deep
-documents:
-  - plan-phase-2-node-graph-view.md
-  - scope-phase-2-node-graph-view.md
-  - feature-phase-2-node-graph-view.md
-  - phase-1-phase-2-node-graph-view.md
-  - limitation-phase-2-node-graph-view.md
+documents: 
 ---
 # Phase 2: Node Graph View
 
@@ -32,5 +27,5 @@ Menghadirkan kanvas visual interaktif (Node Graph View) berbasis `@xyflow/svelte
 ## Document Index
 - [Scope & Requirements](./scope-phase-2-node-graph-view.md) — Batasan MVP, In-Scope, Out-of-Scope, dan Definition of Done.
 - [Feature & Architecture Breakdown](./feature-phase-2-node-graph-view.md) — Komponen frontend, data model, diagram urutan mermaid, dan node anatomy.
-- [Phase 1 Implementation Roadmap](./phase-1-phase-2-node-graph-view.md) — Rincian 4 milestone pengerjaan teknis dari setup dependency hingga polish.
+- [x](./phase-1-phase-2-node-graph-view.md) — Rincian 4 milestone pengerjaan teknis dari setup dependency hingga polish.
 - [Technical Limitations & Trade-offs](./limitation-phase-2-node-graph-view.md) — Keputusan desain arsitektur, trade-offs, dan batasan teknis.

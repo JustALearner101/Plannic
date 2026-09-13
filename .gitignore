@@ -6,6 +6,8 @@ node_modules/
 dist/
 build/
 .svelte-kit/
+*.bun-build
+.*.bun-build
 
 # Tauri & Rust build artifacts
 src-tauri/target/

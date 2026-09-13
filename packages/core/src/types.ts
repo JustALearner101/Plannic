@@ -157,3 +157,21 @@ export interface GetHistoryInput {
 export interface GetHistoryOutput {
   history: HistoryEntry[];
 }
+
+export interface MoveTaskInput {
+  cwd: string;
+  slug: string;
+  taskIdentifier: string;
+  newStatus: string;
+  phaseSlug?: string;
+  comment?: string;
+}
+
+export interface MoveTaskOutput {
+  success: boolean;
+  taskTitle: string;
+  previousStatus: string;
+  newStatus: string;
+  documentFile: string;
+  version: string;
+}

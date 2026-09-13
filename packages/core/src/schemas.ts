@@ -78,3 +78,12 @@ export const GetHistoryInputSchema = z.object({
   slug: z.string().min(1).describe("Slug of the plan"),
   limit: z.number().int().positive().optional().default(20).describe("Max history entries to return"),
 });
+
+export const MoveTaskInputSchema = z.object({
+  cwd: z.string().min(1).describe("Absolute path to project folder"),
+  slug: z.string().min(1).describe("Slug of the plan"),
+  taskIdentifier: z.string().min(1).describe("Task title substring or identifier to match"),
+  newStatus: z.string().min(1).describe("New status: 'todo' | 'in_progress' | 'done' or a custom status identifier (e.g. 'review')"),
+  phaseSlug: z.string().optional().describe("Specific phase document slug (e.g. 'phase-1') or omit to auto-match across phases"),
+  comment: z.string().optional().describe("Optional note for audit trail"),
+});

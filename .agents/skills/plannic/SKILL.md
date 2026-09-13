@@ -25,14 +25,15 @@ Trigger this workflow whenever:
 
 ## Plannic MCP Tools
 
-The Plannic MCP server provides 7 dedicated tools:
+The Plannic MCP server provides 8 dedicated tools:
 1. `get_config` — Reads `.plannic/config.md` project conventions and guidelines.
 2. `init_plan` — Initializes a new plan (creates `.docs/plan-<slug>.md` and sub-documents in deep mode).
 3. `get_plan` — Retrieves the document tree and content for an existing plan.
 4. `update_document` — Updates a specific document section/file (`plan`, `scope`, `feature`, `phase`, `limitation`).
-5. `list_plans` — Lists all plans and their status in `.docs/`.
-6. `search_plans` — Fuzzy searches across all plan documents and titles.
-7. `get_history` — Reads `.docs/.history/plan-<slug>.jsonl` audit trail.
+5. `move_task` — Moves a checklist task between status columns (`todo`, `in_progress`, `done`, or custom status) in a plan's phase documents.
+6. `list_plans` — Lists all plans and their status in `.docs/`.
+7. `search_plans` — Fuzzy searches across all plan documents and titles.
+8. `get_history` — Reads `.docs/.history/plan-<slug>.jsonl` audit trail.
 
 ---
 

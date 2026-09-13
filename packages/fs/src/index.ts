@@ -4,3 +4,4 @@ export * from "./reader.js";
 export * from "./writer.js";
 export * from "./history.js";
 export * from "./search.js";
+export * from "./tasks.js";

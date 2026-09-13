@@ -5,6 +5,7 @@
   import HistoryPanel from '$lib/components/layout/HistoryPanel.svelte';
   import PlanDetail from '$lib/components/plan/PlanDetail.svelte';
   import GraphCanvas from '$lib/components/graph/GraphCanvas.svelte';
+  import KanbanBoard from '$lib/components/board/KanbanBoard.svelte';
   import NewPlanModal from '$lib/components/plan/NewPlanModal.svelte';
   import SearchOverlay from '$lib/components/search/SearchOverlay.svelte';
   import Button from '$lib/components/ui/Button.svelte';
@@ -13,6 +14,7 @@
   import { plansStore } from '$lib/stores/plans.svelte.js';
   import { uiStore } from '$lib/stores/ui.svelte.js';
   import { graphStore } from '$lib/stores/graph.svelte.js';
+  import { boardStore } from '$lib/stores/board.svelte.js';
 
   onMount(async () => {
     if (projectStore.currentPath) {
@@ -45,7 +47,7 @@
   <div class="workspace">
     <Sidebar />
 
-    <main class="main-area" class:graph-mode={graphStore.viewMode === 'graph'}>
+    <main class="main-area" class:graph-mode={uiStore.mainView === 'graph' || uiStore.mainView === 'board'}>
       {#if !projectStore.currentPath}
         <div class="empty-state">
           <div class="empty-box">
@@ -68,15 +70,15 @@
             </Button>
           </div>
         </div>
+      {:else if uiStore.mainView === 'board'}
+        <KanbanBoard />
+      {:else if uiStore.mainView === 'graph' && plansStore.activePlan}
+        <GraphCanvas />
       {:else if plansStore.activePlan}
-        {#if graphStore.viewMode === 'graph'}
-          <GraphCanvas />
-        {:else}
-          <PlanDetail
-            plan={plansStore.activePlan}
-            onSaveDocument={handleSaveDocument}
-          />
-        {/if}
+        <PlanDetail
+          plan={plansStore.activePlan}
+          onSaveDocument={handleSaveDocument}
+        />
       {:else}
         <div class="empty-state">
           <div class="empty-box">
