@@ -2,6 +2,7 @@
   import { projectStore } from '../../stores/project.svelte.js';
   import { plansStore } from '../../stores/plans.svelte.js';
   import { uiStore } from '../../stores/ui.svelte.js';
+  import { graphStore } from '../../stores/graph.svelte.js';
 
   let projectMenuOpen = $state(false);
 
@@ -29,6 +30,10 @@
     if (e.key === 'F5' || ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'r')) {
       e.preventDefault();
       handleManualRefresh();
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'g') {
+      e.preventDefault();
+      graphStore.toggleViewMode();
     }
   }
 </script>
@@ -84,6 +89,27 @@
     >
       <span class="refresh-icon">↻</span>
     </button>
+
+    <div class="view-mode-switcher">
+      <button
+        class="mode-btn"
+        class:active={graphStore.viewMode === 'documents'}
+        onclick={() => graphStore.setViewMode('documents')}
+        title="Document View (Ctrl+G)"
+      >
+        <span class="mode-icon">📄</span>
+        <span class="mode-text">Docs</span>
+      </button>
+      <button
+        class="mode-btn"
+        class:active={graphStore.viewMode === 'graph'}
+        onclick={() => graphStore.setViewMode('graph')}
+        title="Node Graph View (Ctrl+G)"
+      >
+        <span class="mode-icon">◈</span>
+        <span class="mode-text">Graph</span>
+      </button>
+    </div>
   </div>
 
   <div class="header-right">
@@ -328,5 +354,50 @@
     to {
       transform: rotate(360deg);
     }
+  }
+
+  .view-mode-switcher {
+    display: flex;
+    background: var(--base-void);
+    border: 1px solid var(--base-border);
+    border-radius: var(--radius-sm);
+    padding: 2px;
+    gap: 2px;
+    margin-left: 8px;
+  }
+
+  .mode-btn {
+    background: transparent;
+    border: none;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    padding: 2px 7px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all var(--duration-sm) var(--ease-out);
+  }
+
+  .mode-btn:hover {
+    color: var(--text-primary);
+  }
+
+  .mode-btn.active {
+    background: var(--base-overlay);
+    color: var(--accent-text);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+
+  .mode-icon {
+    font-size: 10px;
+  }
+
+  .mode-text {
+    font-weight: 600;
+    letter-spacing: 0.2px;
   }
 </style>

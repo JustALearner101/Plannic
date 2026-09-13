@@ -4,6 +4,7 @@
   import Sidebar from '$lib/components/layout/Sidebar.svelte';
   import HistoryPanel from '$lib/components/layout/HistoryPanel.svelte';
   import PlanDetail from '$lib/components/plan/PlanDetail.svelte';
+  import GraphCanvas from '$lib/components/graph/GraphCanvas.svelte';
   import NewPlanModal from '$lib/components/plan/NewPlanModal.svelte';
   import SearchOverlay from '$lib/components/search/SearchOverlay.svelte';
   import Button from '$lib/components/ui/Button.svelte';
@@ -11,6 +12,7 @@
   import { projectStore } from '$lib/stores/project.svelte.js';
   import { plansStore } from '$lib/stores/plans.svelte.js';
   import { uiStore } from '$lib/stores/ui.svelte.js';
+  import { graphStore } from '$lib/stores/graph.svelte.js';
 
   onMount(async () => {
     if (projectStore.currentPath) {
@@ -43,7 +45,7 @@
   <div class="workspace">
     <Sidebar />
 
-    <main class="main-area">
+    <main class="main-area" class:graph-mode={graphStore.viewMode === 'graph'}>
       {#if !projectStore.currentPath}
         <div class="empty-state">
           <div class="empty-box">
@@ -67,10 +69,14 @@
           </div>
         </div>
       {:else if plansStore.activePlan}
-        <PlanDetail
-          plan={plansStore.activePlan}
-          onSaveDocument={handleSaveDocument}
-        />
+        {#if graphStore.viewMode === 'graph'}
+          <GraphCanvas />
+        {:else}
+          <PlanDetail
+            plan={plansStore.activePlan}
+            onSaveDocument={handleSaveDocument}
+          />
+        {/if}
       {:else}
         <div class="empty-state">
           <div class="empty-box">
@@ -110,6 +116,13 @@
     height: 100%;
     overflow-y: auto;
     background: var(--base-void);
+    position: relative;
+  }
+
+  .main-area.graph-mode {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
 
   .empty-state {
