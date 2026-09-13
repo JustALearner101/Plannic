@@ -1,0 +1,42 @@
+{
+  "name": "@plannic/desktop",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "bun --bun vite dev",
+    "build": "bun --bun vite build",
+    "preview": "bun --bun vite preview",
+    "tauri": "tauri",
+    "check": "bun --bun svelte-kit sync && bun --bun svelte-check --tsconfig ./tsconfig.json",
+    "typecheck": "bun run check"
+  },
+  "dependencies": {
+    "@codemirror/lang-markdown": "^6.3.0",
+    "@codemirror/state": "^6.5.0",
+    "@codemirror/theme-one-dark": "^6.1.2",
+    "@plannic/core": "workspace:*",
+    "@plannic/fs": "workspace:*",
+    "@tauri-apps/api": "^2.2.0",
+    "@tauri-apps/plugin-dialog": "^2.7.3",
+    "@tauri-apps/plugin-fs": "^2.5.2",
+    "codemirror": "^6.0.1",
+    "fuse.js": "^7.5.0",
+    "geist": "^1.7.2",
+    "marked": "^18.0.13"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-static": "^3.0.8",
+    "@sveltejs/kit": "^2.16.0",
+    "@sveltejs/vite-plugin-svelte": "^5.0.0",
+    "@tauri-apps/cli": "^2.2.0",
+    "@unocss/preset-icons": "^65.4.0",
+    "@unocss/preset-typography": "^65.4.0",
+    "@unocss/preset-uno": "^65.4.0",
+    "svelte": "^5.19.0",
+    "svelte-check": "^4.1.0",
+    "typescript": "^5.7.0",
+    "unocss": "^65.4.0",
+    "vite": "^6.0.0"
+  }
+}

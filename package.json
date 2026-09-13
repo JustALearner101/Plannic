@@ -1,0 +1,15 @@
+{
+  "name": "plannic",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:mcp": "bun run apps/mcp-server/src/index.ts",
+    "dev:desktop": "bun run --filter @plannic/desktop tauri -- dev",
+    "dev:web": "bun run --filter @plannic/desktop dev",
+    "build": "bun run --filter '*' build",
+    "typecheck": "bun run --filter '*' typecheck"
+  }
+}
