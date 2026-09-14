@@ -1,0 +1,26 @@
+{
+  "name": "@plannic/cli",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "plan": "./src/index.tsx"
+  },
+  "scripts": {
+    "dev": "bun run --preload ./node_modules/@opentui/solid/scripts/preload.js src/index.tsx",
+    "build": "bun build src/index.tsx --compile --outfile dist/plan",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@opentui/core": "^0.5.11",
+    "@opentui/core-win32-x64": "^0.5.11",
+    "@opentui/keymap": "^0.5.11",
+    "@opentui/solid": "^0.5.11",
+    "@plannic/core": "workspace:*",
+    "@plannic/fs": "workspace:*",
+    "solid-js": "^1.9.15"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0"
+  }
+}
