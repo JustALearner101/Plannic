@@ -1,8 +1,11 @@
 <script lang="ts">
-  import { projectStore } from '../../stores/project.svelte.js';
-  import { plansStore } from '../../stores/plans.svelte.js';
-  import { uiStore } from '../../stores/ui.svelte.js';
-  import { graphStore } from '../../stores/graph.svelte.js';
+  import { projectStore } from '$lib/stores/project.svelte.js';
+  import { plansStore } from '$lib/stores/plans.svelte.js';
+  import { uiStore } from '$lib/stores/ui.svelte.js';
+  import { graphStore } from '$lib/stores/graph.svelte.js';
+  import { agentActivityStore } from '$lib/stores/agentActivity.svelte.js';
+  import { updaterStore } from '$lib/stores/updater.svelte.js';
+  import logoIcon from '$lib/assets/logo-icon.svg';
 
   let projectMenuOpen = $state(false);
 
@@ -46,7 +49,10 @@
 
 <header class="app-header">
   <div class="header-left">
-    <span class="logo">PLANNIC</span>
+    <div class="logo-wrapper">
+      <img src={logoIcon} alt="Plannic Logo" class="logo-icon-img" />
+      <span class="logo">PLANNIC</span>
+    </div>
     <span class="separator">/</span>
 
     <div class="project-selector">
@@ -125,7 +131,25 @@
     </div>
   </div>
 
+  {#if agentActivityStore.isAgentActive}
+    <div class="agent-activity-hud" title={agentActivityStore.statusMessage}>
+      <span class="hud-pulse"></span>
+      <span class="hud-text">{agentActivityStore.statusMessage}</span>
+    </div>
+  {/if}
+
   <div class="header-right">
+    {#if updaterStore.status === 'available'}
+      <button
+        class="update-badge-btn"
+        onclick={() => (updaterStore.dismissed = false)}
+        title="Update v{updaterStore.version} available! Click to view details."
+      >
+        <span class="update-badge-dot"></span>
+        <span class="update-badge-text">v{updaterStore.version}</span>
+      </button>
+    {/if}
+
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div class="search-trigger" onclick={() => (uiStore.searchOpen = true)}>
@@ -154,6 +178,19 @@
     display: flex;
     align-items: center;
     gap: var(--space-2);
+  }
+
+  .logo-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .logo-icon-img {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
   }
 
   .logo {
@@ -412,5 +449,73 @@
   .mode-text {
     font-weight: 600;
     letter-spacing: 0.2px;
+  }
+
+  .agent-activity-hud {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(2, 132, 199, 0.15);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    padding: 3px 12px;
+    border-radius: 9999px;
+    color: #38bdf8;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    max-width: 460px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .hud-pulse {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #38bdf8;
+    box-shadow: 0 0 8px #38bdf8;
+    animation: pulseDot 1s infinite alternate;
+  }
+
+  @keyframes pulseDot {
+    0% { opacity: 0.4; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1.3); }
+  }
+
+  .update-badge-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    padding: 3px 8px;
+    border-radius: var(--radius-sm, 4px);
+    margin-right: 8px;
+    cursor: pointer;
+    transition: all var(--duration-sm, 0.15s) var(--ease-out, ease);
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .update-badge-btn:hover {
+    background: rgba(56, 189, 248, 0.22);
+    border-color: #38bdf8;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+  }
+
+  .update-badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #38bdf8;
+    box-shadow: 0 0 6px #38bdf8;
+    animation: pulseDot 1.2s infinite alternate;
+  }
+
+  .update-badge-text {
+    font-family: var(--font-mono, monospace);
+    font-size: 11px;
+    font-weight: 600;
+    color: #38bdf8;
   }
 </style>

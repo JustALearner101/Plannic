@@ -38,10 +38,17 @@ fn file_exists(path: String) -> Result<bool, String> {
 
 #[tauri::command]
 fn pick_project_folder() -> Result<Option<String>, String> {
-  let folder = rfd::FileDialog::new()
-    .set_title("Select Project Folder")
-    .pick_folder();
-  Ok(folder.map(|p| p.to_string_lossy().to_string()))
+  #[cfg(windows)]
+  {
+    let folder = rfd::FileDialog::new()
+      .set_title("Select Project Folder")
+      .pick_folder();
+    Ok(folder.map(|p| p.to_string_lossy().to_string()))
+  }
+  #[cfg(not(windows))]
+  {
+    Err("pick_project_folder is native to Windows; fallback to tauri-plugin-dialog".to_string())
+  }
 }
 
 #[tauri::command]
@@ -58,6 +65,7 @@ pub fn run() {
     .plugin(tauri_plugin_log::Builder::default().build())
     .plugin(tauri_plugin_dialog::init())
     .plugin(tauri_plugin_fs::init())
+    .plugin(tauri_plugin_updater::Builder::new().build())
     .invoke_handler(tauri::generate_handler![
       read_text_file,
       write_text_file,

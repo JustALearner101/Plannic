@@ -1,9 +1,10 @@
 <script lang="ts">
-  import { boardStore } from '../../stores/board.svelte.js';
-  import { plansStore } from '../../stores/plans.svelte.js';
+  import { boardStore } from '$lib/stores/board.svelte.js';
+  import { plansStore } from '$lib/stores/plans.svelte.js';
   import KanbanColumn from './KanbanColumn.svelte';
   import BoardToolbar from './BoardToolbar.svelte';
   import AddColumnModal from './AddColumnModal.svelte';
+  import MilestoneGraph from './MilestoneGraph.svelte';
 
   // Load tasks whenever active plan or filter changes
   $effect(() => {
@@ -15,6 +16,7 @@
 
 <div class="kanban-board-wrapper">
   <BoardToolbar />
+  <MilestoneGraph />
 
   <div class="kanban-columns-container">
     {#if !plansStore.activePlan && !boardStore.isGlobalMode}

@@ -1,7 +1,7 @@
 import path from "node:path";
 import Fuse from "fuse.js";
 import type { SearchResult, DocType } from "@plannic/core";
-import { listPlans, readPlan } from "./reader.js";
+import { listPlans, readPlan, listAdrs, readAdr, listSpecs, readSpec } from "./reader.js";
 
 interface SearchableItem {
   slug: string;
@@ -34,6 +34,36 @@ export async function searchPlans(
         tags: doc.frontmatter.tags ?? [],
       });
     }
+  }
+
+  // Index ADRs
+  const adrSummaries = await listAdrs(cwd);
+  for (const adrSummary of adrSummaries) {
+    const adr = await readAdr(cwd, adrSummary.number);
+    if (!adr) continue;
+    items.push({
+      slug: adr.slug,
+      planName: `ADR ${adr.number}: ${adr.frontmatter.title}`,
+      docType: "adr",
+      documentFile: path.basename(adr.path),
+      body: adr.body,
+      tags: adr.frontmatter.tags ?? [],
+    });
+  }
+
+  // Index Specs
+  const specSummaries = await listSpecs(cwd);
+  for (const specSummary of specSummaries) {
+    const spec = await readSpec(cwd, specSummary.slug);
+    if (!spec) continue;
+    items.push({
+      slug: spec.slug,
+      planName: `Spec: ${spec.frontmatter.title}`,
+      docType: "spec",
+      documentFile: path.basename(spec.path),
+      body: spec.body,
+      tags: spec.frontmatter.tags ?? [],
+    });
   }
 
   if (items.length === 0) {

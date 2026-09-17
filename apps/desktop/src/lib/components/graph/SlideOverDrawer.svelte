@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { graphStore } from '../../stores/graph.svelte.js';
-  import { plansStore } from '../../stores/plans.svelte.js';
-  import { projectStore } from '../../stores/project.svelte.js';
+  import { graphStore } from '$lib/stores/graph.svelte.js';
+  import { plansStore } from '$lib/stores/plans.svelte.js';
+  import { projectStore } from '$lib/stores/project.svelte.js';
   import MarkdownPreview from '../editor/MarkdownPreview.svelte';
   import CodeMirrorEditor from '../editor/CodeMirrorEditor.svelte';
   import StatusBadge from '../plan/StatusBadge.svelte';

@@ -1,0 +1,67 @@
+name: Release Plannic Desktop
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './apps/desktop/src-tauri -> target'
+
+      - name: Install JavaScript dependencies
+        run: bun install
+
+      - name: Run typecheck & unit tests
+        run: |
+          bun run typecheck
+          bun run test:all
+
+      - name: Build MCP Standalone Executable
+        run: |
+          cd apps/mcp-server
+          bun build --compile --minify --target=bun-windows-x64-baseline src/index.ts --outfile dist/plannic-mcp.exe
+
+      - name: Build and Release Tauri App with Auto-Updater
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        with:
+          projectPath: './apps/desktop'
+          tagName: ${{ github.ref_name }}
+          releaseName: 'Plannic ${{ github.ref_name }}'
+          releaseBody: 'See the attached assets to download and install this version. Auto-updater will automatically detect this release manifest.'
+          releaseDraft: false
+          prerelease: false
+          includeUpdaterJson: true
+          updaterJsonPrefer: 'latest'
+
+      - name: Upload MCP Server Binary to Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: apps/mcp-server/dist/plannic-mcp.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

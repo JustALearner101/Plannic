@@ -1,5 +1,17 @@
 import type { CliState, FeedItem } from "../app/state.js";
-import { listPlans, readPlan, searchPlans, initPlan, moveTask, readHistory } from "@plannic/fs";
+import {
+  listPlans,
+  readPlan,
+  searchPlans,
+  initPlan,
+  moveTask,
+  readHistory,
+  listAdrs,
+  readAdr,
+  listSpecs,
+  readSpec,
+  formatAdrNumber,
+} from "@plannic/fs";
 
 export interface CommandContext {
   state: CliState;
@@ -87,6 +99,98 @@ export const COMMANDS: SlashCommand[] = [
         title: `${plan.root?.frontmatter?.name || plan.slug} (${plan.slug})`,
         metadata: { plan, activeDocType: "plan" },
       });
+    },
+  },
+  {
+    name: "adrs",
+    aliases: ["adr"],
+    description: "List or view Architecture Decision Records (.docs/adrs/)",
+    usage: "/adrs [number|slug]",
+    category: "navigation",
+    execute: async (args, ctx) => {
+      const target = args[0]?.trim();
+      if (target) {
+        const adr = await readAdr(ctx.state.cwd, target);
+        if (!adr) {
+          ctx.appendFeed({
+            type: "error",
+            title: "ADR Not Found",
+            content: `No ADR found matching "${target}". Type \`/adrs\` to see all ADRs.`,
+          });
+          return;
+        }
+
+        ctx.appendFeed({
+          type: "info",
+          title: `ADR #${formatAdrNumber(adr.number)}: ${adr.frontmatter.title} (${adr.frontmatter.status})`,
+          content: `Date: ${adr.frontmatter.date}\nPath: \`${adr.path}\`\n\n${adr.body}`,
+        });
+      } else {
+        const adrs = await listAdrs(ctx.state.cwd);
+        if (adrs.length === 0) {
+          ctx.appendFeed({
+            type: "info",
+            title: "No ADRs Found",
+            content: "No Architecture Decision Records found in `.docs/adrs/`.",
+          });
+          return;
+        }
+
+        const lines = adrs.map(
+          (a) => `• [ADR #${formatAdrNumber(a.number)}] \`${a.status}\`: **${a.title}** (${a.date})`
+        );
+        ctx.appendFeed({
+          type: "info",
+          title: `Architecture Decision Records (${adrs.length})`,
+          content: lines.join("\n"),
+        });
+      }
+    },
+  },
+  {
+    name: "specs",
+    aliases: ["spec"],
+    description: "List or view Living Specifications (.docs/specs/)",
+    usage: "/specs [slug]",
+    category: "navigation",
+    execute: async (args, ctx) => {
+      const slug = args[0]?.trim();
+      if (slug) {
+        const spec = await readSpec(ctx.state.cwd, slug);
+        if (!spec) {
+          ctx.appendFeed({
+            type: "error",
+            title: "Specification Not Found",
+            content: `No specification found with slug "${slug}". Type \`/specs\` to see all specs.`,
+          });
+          return;
+        }
+
+        ctx.appendFeed({
+          type: "info",
+          title: `Spec: ${spec.frontmatter.title} (v${spec.frontmatter.version}, ${spec.frontmatter.status})`,
+          content: `Category: \`${spec.frontmatter.category ?? "general"}\`\nLast Updated: ${spec.frontmatter.lastUpdated}\n\n${spec.body}`,
+        });
+      } else {
+        const specs = await listSpecs(ctx.state.cwd);
+        if (specs.length === 0) {
+          ctx.appendFeed({
+            type: "info",
+            title: "No Specifications Found",
+            content: "No specifications found in `.docs/specs/`.",
+          });
+          return;
+        }
+
+        const lines = specs.map(
+          (s) => `• **${s.title}** (\`${s.slug}\`) [${s.category ?? "general"}]: v${s.version} (\`${s.status}\`)`
+        );
+        ctx.appendFeed({
+          type: "info",
+          title: `Living Specifications & API Contracts (${specs.length})`,
+          content: lines.join("\n"),
+        });
+      }
     },
   },
   {

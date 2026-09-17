@@ -1,7 +1,7 @@
 <script lang="ts">
   import Modal from '../ui/Modal.svelte';
   import Button from '../ui/Button.svelte';
-  import { boardStore } from '../../stores/board.svelte.js';
+  import { boardStore } from '$lib/stores/board.svelte.js';
 
   let title = $state('');
   let customId = $state('');

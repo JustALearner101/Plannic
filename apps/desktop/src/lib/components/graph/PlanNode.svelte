@@ -12,6 +12,8 @@
     feature: '⊞',
     phase: '◷',
     limitation: '⚠',
+    adr: '📜',
+    spec: '📐',
   };
 
   const docLabels: Record<DocType, string> = {
@@ -20,10 +22,17 @@
     feature: 'Features',
     phase: 'Phases',
     limitation: 'Limitations',
+    adr: 'ADR',
+    spec: 'Living Spec',
   };
 </script>
 
-<div class="plan-node" class:selected>
+<div
+  class="plan-node"
+  class:selected
+  class:node-adr={data.docType === 'adr'}
+  class:node-spec={data.docType === 'spec'}
+>
   <!-- Target Handle (Left) - connected from parent -->
   {#if data.docType !== 'plan'}
     <Handle
@@ -51,7 +60,7 @@
   </div>
 
   <!-- Source Handle (Right) - connects to children -->
-  {#if data.docType === 'plan' || data.docType === 'feature'}
+  {#if data.docType === 'plan' || data.docType === 'feature' || data.docType === 'spec' || data.docType === 'adr'}
     <Handle
       type="source"
       position={Position.Right}
@@ -80,6 +89,22 @@
   .plan-node:hover {
     border-color: var(--base-border-hi);
     background: #171922;
+  }
+
+  .plan-node.node-adr {
+    border-color: rgba(234, 179, 8, 0.4);
+  }
+
+  .plan-node.node-adr:hover {
+    border-color: rgba(234, 179, 8, 0.8);
+  }
+
+  .plan-node.node-spec {
+    border-color: rgba(0, 220, 130, 0.4);
+  }
+
+  .plan-node.node-spec:hover {
+    border-color: rgba(0, 220, 130, 0.8);
   }
 
   .plan-node.selected {

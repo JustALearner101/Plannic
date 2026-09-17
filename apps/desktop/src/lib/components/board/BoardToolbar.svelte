@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { boardStore } from '../../stores/board.svelte.js';
-  import { plansStore } from '../../stores/plans.svelte.js';
+  import { boardStore } from '$lib/stores/board.svelte.js';
+  import { plansStore } from '$lib/stores/plans.svelte.js';
+  import PhaseTabBar from './PhaseTabBar.svelte';
 
   let phaseOptions = $derived.by<{ slug: string; name: string }[]>(() => {
     if (!plansStore.activePlan || !plansStore.activePlan.documents) return [];
@@ -43,21 +44,8 @@
       </button>
     </div>
 
-    {#if !boardStore.isGlobalMode && phaseOptions.length > 0}
-      <div class="phase-selector">
-        <label for="phase-select" class="selector-label">Phase:</label>
-        <select
-          id="phase-select"
-          class="phase-dropdown"
-          value={boardStore.filterPhase}
-          onchange={handlePhaseChange}
-        >
-          <option value="all">All Phases</option>
-          {#each phaseOptions as option}
-            <option value={option.slug}>{option.name}</option>
-          {/each}
-        </select>
-      </div>
+    {#if !boardStore.isGlobalMode}
+      <PhaseTabBar />
     {/if}
   </div>
 
@@ -124,34 +112,6 @@
     background: var(--base-overlay);
     color: var(--accent-text);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  }
-
-  .phase-selector {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .selector-label {
-    font-size: 11px;
-    color: var(--text-secondary);
-    font-family: var(--font-mono);
-  }
-
-  .phase-dropdown {
-    background: var(--base-surface);
-    border: 1px solid var(--base-border);
-    color: var(--text-primary);
-    font-family: var(--font-ui);
-    font-size: 11px;
-    padding: 2px 6px;
-    border-radius: var(--radius-sm);
-    outline: none;
-    cursor: pointer;
-  }
-
-  .phase-dropdown:focus {
-    border-color: var(--accent);
   }
 
   .toolbar-right {

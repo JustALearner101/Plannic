@@ -1,7 +1,13 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import matter from "gray-matter";
-import type { ProjectConfig, PlanMode } from "@plannic/core";
+import {
+  ProjectConfigFrontmatterSchema,
+  type ProjectConfig,
+  type PlanMode,
+  type GeneratedDocConfig,
+  type RulesetConfig,
+} from "@plannic/core";
 import { getConfigPath } from "./slug.js";
 
 export async function readConfig(cwd: string): Promise<{ found: boolean; config?: ProjectConfig; raw: string; path: string }> {
@@ -10,6 +16,9 @@ export async function readConfig(cwd: string): Promise<{ found: boolean; config?
     const rawContent = await fs.readFile(filePath, "utf-8");
     const parsed = matter(rawContent);
     const data = parsed.data as Record<string, unknown>;
+
+    const validation = ProjectConfigFrontmatterSchema.safeParse(data);
+    const parsedData = validation.success ? validation.data : null;
 
     const stackRaw = data.stack;
     const stack: string[] = Array.isArray(stackRaw)
@@ -28,6 +37,8 @@ export async function readConfig(cwd: string): Promise<{ found: boolean; config?
       stack,
       default_mode,
       lang,
+      generated_docs: parsedData?.generated_docs,
+      ruleset: parsedData?.ruleset,
       body: parsed.content.trim(),
     };
 
@@ -52,7 +63,15 @@ export async function readConfig(cwd: string): Promise<{ found: boolean; config?
 
 export async function writeConfig(
   cwd: string,
-  config: { project: string; stack: string[]; default_mode: PlanMode; lang?: string; body?: string }
+  config: {
+    project: string;
+    stack: string[];
+    default_mode: PlanMode;
+    lang?: string;
+    generated_docs?: GeneratedDocConfig[];
+    ruleset?: RulesetConfig;
+    body?: string;
+  }
 ): Promise<string> {
   const filePath = getConfigPath(cwd);
   await fs.mkdir(path.dirname(filePath), { recursive: true });
@@ -62,6 +81,8 @@ export async function writeConfig(
     stack: config.stack,
     default_mode: config.default_mode,
     ...(config.lang ? { lang: config.lang } : {}),
+    ...(config.generated_docs ? { generated_docs: config.generated_docs } : {}),
+    ...(config.ruleset ? { ruleset: config.ruleset } : {}),
   };
 
   const body = config.body ?? "## Context\n\n## Planning Rules\n";

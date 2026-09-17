@@ -5,3 +5,7 @@ export * from "./writer.js";
 export * from "./history.js";
 export * from "./search.js";
 export * from "./tasks.js";
+export * from "./migrator.js";
+export * from "./activity.js";
+export * from "./phase.js";
+export * from "./progress.js";

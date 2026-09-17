@@ -2,9 +2,9 @@
   import { onMount } from 'svelte';
   import Fuse from 'fuse.js';
   import type { PlanSummary, DocType } from '@plannic/core';
-  import { plansStore } from '../../stores/plans.svelte.js';
-  import { projectStore } from '../../stores/project.svelte.js';
-  import { uiStore } from '../../stores/ui.svelte.js';
+  import { plansStore } from '$lib/stores/plans.svelte.js';
+  import { projectStore } from '$lib/stores/project.svelte.js';
+  import { uiStore } from '$lib/stores/ui.svelte.js';
 
   interface SearchItem {
     slug: string;

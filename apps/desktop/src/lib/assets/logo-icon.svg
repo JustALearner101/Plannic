@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="100%" height="100%" fill="none">
+  <defs>
+    <linearGradient id="plannic-grad-cyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#0284C7" />
+    </linearGradient>
+    <linearGradient id="plannic-grad-indigo" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#818CF8" />
+      <stop offset="100%" stop-color="#4F46E5" />
+    </linearGradient>
+    <linearGradient id="plannic-grad-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+    <filter id="plannic-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Base Rounded Container with subtle tech border -->
+  <rect x="8" y="8" width="112" height="112" rx="28" fill="url(#plannic-grad-bg)" stroke="#38BDF8" stroke-opacity="0.35" stroke-width="2" />
+  
+  <!-- Architectural Grid Backdrop -->
+  <path d="M28 44h72M28 64h72M28 84h72M44 28v72M64 28v72M84 28v72" stroke="#334155" stroke-width="1" stroke-dasharray="2 4" opacity="0.6" />
+
+  <!-- Isometric Hexagon Architectural Core -->
+  <!-- Top Face -->
+  <polygon points="64,30 94,47 64,64 34,47" fill="url(#plannic-grad-cyan)" opacity="0.9" />
+  
+  <!-- Left Face -->
+  <polygon points="34,47 64,64 64,98 34,81" fill="url(#plannic-grad-indigo)" opacity="0.85" />
+  
+  <!-- Right Face -->
+  <polygon points="64,64 94,47 94,81 64,98" fill="#1E1B4B" stroke="#6366F1" stroke-width="1.5" />
+
+  <!-- Isometric Facet Highlight Overlays -->
+  <polyline points="34,47 64,30 94,47" stroke="#BAE6FD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <line x1="64" y1="30" x2="64" y2="64" stroke="#BAE6FD" stroke-width="1.5" stroke-linecap="round" />
+  <line x1="64" y1="64" x2="64" y2="98" stroke="#38BDF8" stroke-width="2" stroke-linecap="round" />
+
+  <!-- Glowing Plan Nodes (Connected Architecture) -->
+  <circle cx="64" cy="30" r="4.5" fill="#38BDF8" filter="url(#plannic-glow)" />
+  <circle cx="94" cy="47" r="4" fill="#818CF8" />
+  <circle cx="94" cy="81" r="4" fill="#38BDF8" />
+  <circle cx="64" cy="98" r="4.5" fill="#38BDF8" filter="url(#plannic-glow)" />
+  <circle cx="34" cy="81" r="4" fill="#818CF8" />
+  <circle cx="34" cy="47" r="4" fill="#38BDF8" />
+
+  <!-- Center Core Pulsing Orb (Agent Synergy) -->
+  <circle cx="64" cy="64" r="5" fill="#F8FAFC" filter="url(#plannic-glow)" />
+  <circle cx="64" cy="64" r="2.5" fill="#38BDF8" />
+</svg>

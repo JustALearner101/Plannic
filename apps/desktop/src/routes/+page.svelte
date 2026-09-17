@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
   import Header from '$lib/components/layout/Header.svelte';
   import Sidebar from '$lib/components/layout/Sidebar.svelte';
   import HistoryPanel from '$lib/components/layout/HistoryPanel.svelte';
@@ -8,6 +8,9 @@
   import KanbanBoard from '$lib/components/board/KanbanBoard.svelte';
   import NewPlanModal from '$lib/components/plan/NewPlanModal.svelte';
   import SearchOverlay from '$lib/components/search/SearchOverlay.svelte';
+  import AmbientAgentBorder from '$lib/components/ui/AmbientAgentBorder.svelte';
+  import AgentCursor from '$lib/components/ui/AgentCursor.svelte';
+  import UpdateNotificationToast from '$lib/components/ui/UpdateNotificationToast.svelte';
   import Button from '$lib/components/ui/Button.svelte';
 
   import { projectStore } from '$lib/stores/project.svelte.js';
@@ -15,11 +18,19 @@
   import { uiStore } from '$lib/stores/ui.svelte.js';
   import { graphStore } from '$lib/stores/graph.svelte.js';
   import { boardStore } from '$lib/stores/board.svelte.js';
+  import { agentActivityStore } from '$lib/stores/agentActivity.svelte.js';
+  import { updaterStore } from '$lib/stores/updater.svelte.js';
 
   onMount(async () => {
+    agentActivityStore.init();
+    updaterStore.checkForUpdates();
     if (projectStore.currentPath) {
       await plansStore.loadPlans(projectStore.currentPath);
     }
+  });
+
+  onDestroy(() => {
+    agentActivityStore.destroy();
   });
 
   async function handleOpenProject() {
@@ -42,6 +53,8 @@
 </script>
 
 <div class="shell">
+  <AmbientAgentBorder />
+  <AgentCursor />
   <Header />
 
   <div class="workspace">
@@ -94,6 +107,7 @@
 
 <SearchOverlay />
 <NewPlanModal />
+<UpdateNotificationToast />
 
 <style>
   .shell {

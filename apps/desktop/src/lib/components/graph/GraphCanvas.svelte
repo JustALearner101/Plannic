@@ -9,8 +9,8 @@
   import '@xyflow/svelte/dist/style.css';
   import PlanNode from './PlanNode.svelte';
   import SlideOverDrawer from './SlideOverDrawer.svelte';
-  import { graphStore } from '../../stores/graph.svelte.js';
-  import { plansStore } from '../../stores/plans.svelte.js';
+  import { graphStore } from '$lib/stores/graph.svelte.js';
+  import { plansStore } from '$lib/stores/plans.svelte.js';
   import type { PlanNodeData } from '../../types/graph.js';
 
   const nodeTypes: NodeTypes = {

@@ -3,6 +3,7 @@ import type { CliState, FeedItem } from "../app/state.js";
 import type { Plan, PlanSummary, SearchResult } from "@plannic/core";
 import { theme } from "../theme/tokens.js";
 import { COMMANDS } from "../commands/registry.js";
+import { PLANNIC_ASCII_COMPACT } from "../banner.js";
 
 interface FeedProps {
   state: CliState;
@@ -44,9 +45,12 @@ function FeedItemCard(props: { item: FeedItem; state: CliState }) {
           marginBottom={1}
         >
           <text fg={theme.accent}>
+            {PLANNIC_ASCII_COMPACT}
+          </text>
+          <text fg={theme.accent}>
             <b>[ PLANNIC WORKSHOP ]</b>{" "}
             <span style={{ fg: theme.textMuted }}>
-              Structured Project Planning Workbench
+              Architecture, Living Specs &amp; Strategic Planning
             </span>
           </text>
           <text fg={theme.textDim}>

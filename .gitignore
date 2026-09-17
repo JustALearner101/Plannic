@@ -5,6 +5,7 @@ node_modules/
 # Build outputs
 dist/
 build/
+release/
 .svelte-kit/
 *.bun-build
 .*.bun-build
@@ -13,11 +14,15 @@ build/
 src-tauri/target/
 **/target/
 *.exe
+*.msi
 plannic-mcp.exe
 
 # Test scratch folders
 .test_*/
 .e2e_test/
+**/test-results/
+**/playwright-report/
+playwright-report/
 
 # OS and Editor
 .DS_Store
@@ -39,7 +44,9 @@ yarn-debug.log*
 yarn-error.log*
 
 # AI Agents & Tooling
-.agents/
+.agents/*
+!.agents/skills/
+!.agents/plugins/
 .agent/
 .pi/
 skills-lock.json

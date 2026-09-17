@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { KanbanTask } from '../../types/board.js';
-  import { boardStore } from '../../stores/board.svelte.js';
+  import { boardStore } from '$lib/stores/board.svelte.js';
 
   let { task, ontoggle }: { task: KanbanTask; ontoggle?: () => void } = $props();
 
@@ -21,7 +21,13 @@
   }
 </script>
 
-<div class="kanban-card" class:is-done={task.status === 'done'} class:is-progress={task.status === 'in_progress'}>
+<div
+  class="kanban-card"
+  class:is-done={task.status === 'done'}
+  class:is-progress={task.status === 'in_progress'}
+  data-task-id={task.id}
+  data-task-title={task.title}
+>
   <div class="card-header">
     <button
       class="card-checkbox"

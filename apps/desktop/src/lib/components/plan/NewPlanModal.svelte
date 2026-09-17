@@ -2,9 +2,9 @@
   import Modal from '../ui/Modal.svelte';
   import Button from '../ui/Button.svelte';
   import type { PlanMode } from '@plannic/core';
-  import { plansStore } from '../../stores/plans.svelte.js';
-  import { projectStore } from '../../stores/project.svelte.js';
-  import { uiStore } from '../../stores/ui.svelte.js';
+  import { plansStore } from '$lib/stores/plans.svelte.js';
+  import { projectStore } from '$lib/stores/project.svelte.js';
+  import { uiStore } from '$lib/stores/ui.svelte.js';
 
   let planName = $state('');
   let selectedMode = $state<PlanMode>('deep');

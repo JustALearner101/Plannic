@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { plansStore } from '../../stores/plans.svelte.js';
-  import { uiStore } from '../../stores/ui.svelte.js';
+  import { plansStore } from '$lib/stores/plans.svelte.js';
+  import { uiStore } from '$lib/stores/ui.svelte.js';
 
   function formatTime(iso: string): string {
     if (!iso) return '';

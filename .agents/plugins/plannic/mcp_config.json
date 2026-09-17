@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "plannic": {
+      "command": "D:/Project/Plannic/plannic-mcp.exe"
+    }
+  }
+}

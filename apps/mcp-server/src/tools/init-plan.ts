@@ -13,11 +13,17 @@ export function registerInitPlan(server: McpServer) {
     async ({ cwd, name, mode }) => {
       try {
         const result = await initPlan(cwd, name, mode);
+        const formattedFiles = result.filesCreated
+          .map((f) => {
+            const norm = f.replace(/\\/g, "/");
+            return `- ${norm.startsWith(".docs") ? norm : `.docs/${norm}`}`;
+          })
+          .join("\n");
         return {
           content: [
             {
               type: "text" as const,
-              text: `Plan "${name}" (${result.slug}) initialized successfully in ${mode} mode.\nFiles created:\n${result.filesCreated.map((f) => `- .docs/${f}`).join("\n")}`,
+              text: `Plan "${name}" (${result.slug}) initialized successfully in ${mode} mode.\nFiles created:\n${formattedFiles}`,
             },
           ],
         };

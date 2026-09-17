@@ -12,6 +12,14 @@
     "dev:desktop": "bun run --filter @plannic/desktop tauri -- dev",
     "dev:web": "bun run --filter @plannic/desktop dev",
     "build": "bun run --filter '*' build",
-    "typecheck": "bun run --filter '*' typecheck"
+    "typecheck": "bun run --filter '*' typecheck",
+    "test:all": "bun run packages/fs/scripts/run-all-tests.ts",
+    "test:watch": "bun run packages/fs/scripts/run-all-tests.ts --watch",
+    "test:e2e": "bun run e2e/runner.ts",
+    "migrate-docs": "bun run packages/fs/scripts/migrate-docs.ts",
+    "bump": "bun run scripts/bump-version.ts"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0"
   }
 }

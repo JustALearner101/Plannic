@@ -2,16 +2,42 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
 import matter from "gray-matter";
-import type {
-  DocType,
-  DocFrontmatter,
-  InitPlanOutput,
-  PlanMode,
-  UpdateDocumentOutput,
-  HistoryEntry,
+import {
+  DEFAULT_GENERATED_DOCS,
+  type DocType,
+  type DocFrontmatter,
+  type InitPlanOutput,
+  type PlanMode,
+  type UpdateDocumentOutput,
+  type HistoryEntry,
+  type InitAdrInput,
+  type InitAdrOutput,
+  type InitSpecInput,
+  type InitSpecOutput,
+  type UpdateSpecInput,
+  type UpdateSpecOutput,
+  type AdrFrontmatter,
+  type SpecFrontmatter,
 } from "@plannic/core";
-import { generateSlug, getDocsDir, getDocPath, getDocFilename } from "./slug.js";
-import { appendHistory } from "./history.js";
+import {
+  generateSlug,
+  getDocsDir,
+  getPlansDir,
+  getPlanDir,
+  getHierarchicalDocPath,
+  getLegacyDocPath,
+  getDocPath,
+  getDocFilename,
+  getAdrsDir,
+  getSpecsDir,
+  formatAdrNumber,
+  formatAdrFilename,
+  getAdrPath,
+  formatSpecFilename,
+  getSpecPath,
+} from "./slug.js";
+import { appendHistory, appendSpecHistory } from "./history.js";
+import { readConfig } from "./config.js";
 
 function makeDocFrontmatter(
   slug: string,
@@ -39,61 +65,118 @@ function makeDocFrontmatter(
   };
 }
 
+export async function resolveDocPath(
+  cwd: string,
+  slug: string,
+  docType: DocType
+): Promise<string> {
+  const planDir = getPlanDir(cwd, slug);
+  const hierarchicalPath = getHierarchicalDocPath(cwd, slug, docType);
+
+  try {
+    await fs.access(hierarchicalPath);
+    return hierarchicalPath;
+  } catch {
+    // try fallback within hierarchical if docType === "phase"
+    if (docType === "phase") {
+      const altPhase = path.join(planDir, "phase.md");
+      try {
+        await fs.access(altPhase);
+        return altPhase;
+      } catch {
+        // ignore
+      }
+    }
+  }
+
+  // Check legacy flat path
+  const legacyPath = getLegacyDocPath(cwd, slug, docType);
+  try {
+    await fs.access(legacyPath);
+    return legacyPath;
+  } catch {
+    // If neither exists, check if planDir exists
+    try {
+      await fs.access(planDir);
+      return hierarchicalPath;
+    } catch {
+      // check if legacy root exists
+      const legacyPlanPath = getLegacyDocPath(cwd, slug, "plan");
+      try {
+        await fs.access(legacyPlanPath);
+        return legacyPath;
+      } catch {
+        // default to hierarchical
+        return hierarchicalPath;
+      }
+    }
+  }
+}
+
 export async function initPlan(cwd: string, name: string, mode: PlanMode): Promise<InitPlanOutput> {
   const slug = generateSlug(name);
-  const docsDir = getDocsDir(cwd);
-  await fs.mkdir(docsDir, { recursive: true });
+  const planDir = getPlanDir(cwd, slug);
+  await fs.mkdir(planDir, { recursive: true });
 
   const now = new Date().toISOString();
   const filesCreated: string[] = [];
 
+  const { config } = await readConfig(cwd);
+
   if (mode === "quick") {
-    const rootFilename = getDocFilename(slug, "plan");
-    const rootPath = path.join(docsDir, rootFilename);
+    const rootFilename = "plan.md";
+    const rootPath = path.join(planDir, rootFilename);
     const frontmatter = makeDocFrontmatter(slug, name, "plan", name, now, "quick", [rootFilename]);
     const initialBody = `# ${name}\n\n## Overview\n\n## Implementation Details\n`;
     const content = matter.stringify(initialBody, frontmatter);
     await fs.writeFile(rootPath, content, "utf-8");
-    filesCreated.push(rootFilename);
+    filesCreated.push(path.join(".docs", "plans", slug, rootFilename));
   } else {
-    // Deep mode
-    const rootFilename = getDocFilename(slug, "plan");
-    const scopeFilename = getDocFilename(slug, "scope");
-    const featureFilename = getDocFilename(slug, "feature");
-    const phaseFilename = getDocFilename(slug, "phase", 1);
-    const limitFilename = getDocFilename(slug, "limitation");
+    // Deep mode driven by config.generated_docs or DEFAULT_GENERATED_DOCS
+    const docsToGenerate =
+      config?.generated_docs && config.generated_docs.length > 0
+        ? config.generated_docs
+        : DEFAULT_GENERATED_DOCS;
 
-    const allDocs = [rootFilename, scopeFilename, featureFilename, phaseFilename, limitFilename];
+    const allFilenames = docsToGenerate.map((d) => d.filename);
 
-    // 1. Root plan doc
-    const rootFrontmatter = makeDocFrontmatter(slug, name, "plan", name, now, "deep", allDocs);
-    const rootBody = `# ${name}\n\n## Goal\n\n## Document Index\n- [Scope](./${scopeFilename})\n- [Feature Breakdown](./${featureFilename})\n- [Phase 1 Implementation](./${phaseFilename})\n- [Limitations](./${limitFilename})\n`;
-    await fs.writeFile(path.join(docsDir, rootFilename), matter.stringify(rootBody, rootFrontmatter), "utf-8");
-    filesCreated.push(rootFilename);
+    for (const docConfig of docsToGenerate) {
+      const filePath = path.join(planDir, docConfig.filename);
+      let body = "";
+      let title = `${name} — ${docConfig.title}`;
 
-    // 2. Scope doc
-    const scopeFrontmatter = makeDocFrontmatter(slug, name, "scope", `${name} — Scope`, now);
-    const scopeBody = `## In Scope\n\n- Core functionality\n\n## Out of Scope\n\n- Secondary features\n`;
-    await fs.writeFile(path.join(docsDir, scopeFilename), matter.stringify(scopeBody, scopeFrontmatter), "utf-8");
-    filesCreated.push(scopeFilename);
+      if (docConfig.type === "plan") {
+        title = name;
+        const indexLinks = docsToGenerate
+          .filter((d) => d.type !== "plan")
+          .map((d) => `- [${d.title}](./${d.filename})`)
+          .join("\n");
+        body = `# ${name}\n\n## Goal\n\n## Document Index\n${indexLinks}\n`;
+      } else if (docConfig.type === "scope") {
+        body = `## In Scope\n\n- Core functionality\n\n## Out of Scope\n\n- Secondary features\n`;
+      } else if (docConfig.type === "feature") {
+        body = `## Core Features\n\n### Feature 1\nDescription and acceptance criteria.\n`;
+      } else if (docConfig.type === "phase") {
+        body = `## Deliverables\n\n- Step 1\n- Step 2\n\n## Verification\n`;
+      } else if (docConfig.type === "limitation") {
+        body = `## Known Limitations\n\n- Edge cases not covered in this iteration\n`;
+      } else {
+        body = docConfig.template ?? `## ${docConfig.title}\n\n${docConfig.description ?? ""}\n`;
+      }
 
-    // 3. Feature doc
-    const featureFrontmatter = makeDocFrontmatter(slug, name, "feature", `${name} — Features`, now);
-    const featureBody = `## Core Features\n\n### Feature 1\nDescription and acceptance criteria.\n`;
-    await fs.writeFile(path.join(docsDir, featureFilename), matter.stringify(featureBody, featureFrontmatter), "utf-8");
-    filesCreated.push(featureFilename);
+      const frontmatter = makeDocFrontmatter(
+        slug,
+        name,
+        docConfig.type,
+        title,
+        now,
+        docConfig.type === "plan" ? "deep" : undefined,
+        docConfig.type === "plan" ? allFilenames : undefined
+      );
 
-    // 4. Phase 1 doc
-    const phaseFrontmatter = makeDocFrontmatter(slug, name, "phase", `${name} — Phase 1`, now);
-    const phaseBody = `## Deliverables\n\n- Step 1\n- Step 2\n\n## Verification\n`;
-    await fs.writeFile(path.join(docsDir, phaseFilename), matter.stringify(phaseBody, phaseFrontmatter), "utf-8");
-    filesCreated.push(phaseFilename);
-
-    // 5. Limitation doc
-    const limitFrontmatter = makeDocFrontmatter(slug, name, "limitation", `${name} — Limitations`, now);
-    const limitBody = `## Known Limitations\n\n- Edge cases not covered in this iteration\n`;
-    await fs.writeFile(path.join(docsDir, limitFilename), matter.stringify(limitBody, limitFrontmatter), "utf-8");
-    filesCreated.push(limitFilename);
+      await fs.writeFile(filePath, matter.stringify(body, frontmatter), "utf-8");
+      filesCreated.push(path.join(".docs", "plans", slug, docConfig.filename));
+    }
   }
 
   // Create initial history entry
@@ -103,7 +186,7 @@ export async function initPlan(cwd: string, name: string, mode: PlanMode): Promi
     version: "1.0",
     summary: `Plan '${name}' initialized in ${mode} mode`,
     changedBy: "claude-code",
-    document: getDocFilename(slug, "plan"),
+    document: "plan.md",
     docType: "plan",
   };
   await appendHistory(cwd, slug, historyEntry);
@@ -121,9 +204,10 @@ export async function updateDocument(
   docType: DocType,
   body: string,
   changeSummary = "Updated document",
-  changedBy = "claude-code"
+  changedBy = "claude-code",
+  targetPath?: string
 ): Promise<UpdateDocumentOutput> {
-  const filePath = getDocPath(cwd, slug, docType);
+  const filePath = targetPath ?? (await resolveDocPath(cwd, slug, docType));
   const raw = await fs.readFile(filePath, "utf-8");
   const parsed = matter(raw);
   const data = parsed.data as DocFrontmatter;
@@ -158,3 +242,153 @@ export async function updateDocument(
     path: filePath,
   };
 }
+
+export async function initAdr(cwd: string, input: InitAdrInput): Promise<InitAdrOutput> {
+  const adrsDir = getAdrsDir(cwd);
+  await fs.mkdir(adrsDir, { recursive: true });
+
+  // Find next ADR number
+  let maxNumber = 0;
+  try {
+    const files = await fs.readdir(adrsDir);
+    for (const file of files) {
+      const match = file.match(/^adr-(\d+)-.*\.md$/);
+      if (match) {
+        const num = parseInt(match[1], 10);
+        if (num > maxNumber) {
+          maxNumber = num;
+        }
+      }
+    }
+  } catch {
+    // If directory read fails, start at 0
+  }
+
+  const nextNumber = maxNumber + 1;
+  const slug = generateSlug(input.title);
+  const filePath = getAdrPath(cwd, nextNumber, slug);
+
+  const now = new Date().toISOString().slice(0, 10);
+  const frontmatter: AdrFrontmatter = {
+    id: crypto.randomUUID(),
+    number: nextNumber,
+    title: input.title,
+    slug,
+    status: input.status ?? "proposed",
+    date: now,
+    tags: input.tags ?? [],
+    description: input.description ?? "",
+    ...(input.deciders ? { deciders: input.deciders } : {}),
+  };
+
+  const initialBody = `# ADR ${formatAdrNumber(nextNumber)}: ${input.title}
+
+## Context and Problem Statement
+${input.description ? `${input.description}\n` : "Describe the context and problem statement here."}
+
+## Considered Options
+- Option 1
+- Option 2
+
+## Decision Outcome
+Chosen option: "[Option 1]", because [justification].
+
+## Consequences
+- **Positive**:
+- **Negative / Trade-offs**:
+`;
+
+  const content = matter.stringify(initialBody, frontmatter);
+  await fs.writeFile(filePath, content, "utf-8");
+
+  return {
+    status: "created",
+    number: nextNumber,
+    slug,
+    path: filePath,
+  };
+}
+
+export async function initSpec(cwd: string, input: InitSpecInput): Promise<InitSpecOutput> {
+  const specsDir = getSpecsDir(cwd);
+  await fs.mkdir(specsDir, { recursive: true });
+
+  const slug = generateSlug(input.title);
+  const filePath = getSpecPath(cwd, slug);
+
+  const now = new Date().toISOString();
+  const frontmatter: SpecFrontmatter = {
+    id: crypto.randomUUID(),
+    title: input.title,
+    slug,
+    status: "draft",
+    version: "1.0",
+    created: now,
+    lastUpdated: now,
+    tags: input.tags ?? [],
+    description: input.description ?? "",
+    ...(input.category ? { category: input.category } : {}),
+  };
+
+  const initialBody = `# ${input.title}
+
+## 1. Overview
+${input.description ? `${input.description}\n` : "System or technical specification overview."}
+
+## 2. Architecture & Design
+
+## 3. Data Models & Schemas
+
+## 4. API Endpoints & Contracts
+`;
+
+  const content = matter.stringify(initialBody, frontmatter);
+  await fs.writeFile(filePath, content, "utf-8");
+
+  return {
+    status: "created",
+    slug,
+    path: filePath,
+  };
+}
+
+export async function updateSpec(cwd: string, input: UpdateSpecInput): Promise<UpdateSpecOutput> {
+  const filePath = getSpecPath(cwd, input.slug);
+  const raw = await fs.readFile(filePath, "utf-8");
+  const parsed = matter(raw);
+  const data = parsed.data as SpecFrontmatter;
+
+  // Bump version (e.g. 1.0 -> 1.1)
+  const currentVersion = parseFloat(data.version || "1.0");
+  const nextVersion = (isNaN(currentVersion) ? 1.0 : currentVersion + 0.1).toFixed(1);
+  const now = new Date().toISOString();
+
+  data.version = nextVersion;
+  data.lastUpdated = now;
+  if (input.status) {
+    data.status = input.status;
+  }
+
+  const newContent = matter.stringify(input.body, data);
+  await fs.writeFile(filePath, newContent, "utf-8");
+
+  // Log history
+  const filename = path.basename(filePath);
+  const historyEntry: HistoryEntry = {
+    timestamp: now,
+    type: "updated",
+    version: nextVersion,
+    summary: input.changeSummary || "Updated specification",
+    changedBy: input.changedBy || "agent",
+    document: filename,
+    docType: "spec",
+  };
+  await appendSpecHistory(cwd, input.slug, historyEntry);
+
+  return {
+    success: true,
+    version: nextVersion,
+    path: filePath,
+  };
+}
+

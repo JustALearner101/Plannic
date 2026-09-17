@@ -4,12 +4,11 @@ import { searchCommand } from "./commands/search.js";
 import { createCommand } from "./commands/create.js";
 import { openCommand } from "./commands/open.js";
 import { startTui } from "./app/App.js";
+import { printAsciiBanner } from "./banner.js";
 
 function printHelp() {
-  console.log(`
-\x1b[1m\x1b[36mPlannic CLI\x1b[0m — Structured Project Planning Workbench (Terminal Edition)
-
-\x1b[1mUSAGE:\x1b[0m
+  printAsciiBanner();
+  console.log(`\x1b[1mUSAGE:\x1b[0m
   $ plan [command] [options]
   $ bun run plan [command] [options]
 
@@ -76,7 +75,7 @@ async function main() {
     case "-v":
     case "--version":
     case "version":
-      console.log("Plannic CLI v0.1.0 (OpenTUI Edition)");
+      printAsciiBanner(true);
       break;
 
     default:

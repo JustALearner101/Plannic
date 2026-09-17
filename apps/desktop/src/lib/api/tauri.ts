@@ -1,13 +1,15 @@
 import { invoke } from '@tauri-apps/api/core';
 import { open } from '@tauri-apps/plugin-dialog';
-import type {
-  Plan,
-  PlanDocument,
-  PlanSummary,
-  DocFrontmatter,
-  DocType,
-  PlanMode,
-  HistoryEntry,
+import {
+  type Plan,
+  type PlanDocument,
+  type PlanSummary,
+  type DocFrontmatter,
+  type DocType,
+  type PlanMode,
+  type HistoryEntry,
+  getHierarchicalDocFilename,
+  getLegacyDocFilename,
 } from '@plannic/core';
 
 // Low-level filesystem wrappers
@@ -125,10 +127,52 @@ function joinPath(...parts: string[]): string {
 // High-level Plan API
 export async function listProjectPlans(cwd: string): Promise<PlanSummary[]> {
   const docsDir = joinPath(cwd, '.docs');
+  const plansDir = joinPath(docsDir, 'plans');
+  const planSummaries = new Map<string, PlanSummary>();
+
+  // 1. Scan hierarchical plans under .docs/plans/
+  try {
+    const entries = await readDirectory(plansDir);
+    for (const slug of entries) {
+      const planDirPath = joinPath(plansDir, slug);
+      const planRootPath = joinPath(planDirPath, 'plan.md');
+      try {
+        const raw = await readTextFile(planRootPath);
+        const doc = parseDoc(raw, planRootPath);
+        if (doc) {
+          const fm = doc.frontmatter;
+          const mode = fm.mode ?? 'deep';
+          let docCount = 1;
+          try {
+            const dirFiles = await readDirectory(planDirPath);
+            docCount = dirFiles.filter((f) => f.endsWith('.md')).length;
+          } catch {
+            // ignore
+          }
+
+          planSummaries.set(slug, {
+            slug: fm.slug || slug,
+            name: fm.name || slug,
+            mode,
+            status: fm.status || 'draft',
+            version: fm.version || '1.0',
+            lastUpdated: fm.lastUpdated || fm.created || '',
+            description: fm.description || '',
+            documentCount: docCount,
+            format: 'hierarchical',
+          });
+        }
+      } catch {
+        // ignore non-plan subfolder
+      }
+    }
+  } catch {
+    // .docs/plans does not exist or cannot be read
+  }
+
+  // 2. Scan legacy flat plans under .docs/
   try {
     const files = await readDirectory(docsDir);
-    const plans: PlanSummary[] = [];
-
     for (const file of files) {
       if (file.startsWith('plan-') && file.endsWith('.md')) {
         const filePath = joinPath(docsDir, file);
@@ -138,8 +182,9 @@ export async function listProjectPlans(cwd: string): Promise<PlanSummary[]> {
           if (doc) {
             const fm = doc.frontmatter;
             const slug = fm.slug;
-            const mode = fm.mode ?? 'quick';
+            if (planSummaries.has(slug)) continue;
 
+            const mode = fm.mode ?? 'quick';
             let docCount = 1;
             if (mode === 'deep') {
               docCount = files.filter(
@@ -147,7 +192,7 @@ export async function listProjectPlans(cwd: string): Promise<PlanSummary[]> {
               ).length;
             }
 
-            plans.push({
+            planSummaries.set(slug, {
               slug,
               name: fm.name || slug,
               mode,
@@ -156,6 +201,7 @@ export async function listProjectPlans(cwd: string): Promise<PlanSummary[]> {
               lastUpdated: fm.lastUpdated || fm.created || '',
               description: fm.description || '',
               documentCount: docCount,
+              format: 'legacy_flat',
             });
           }
         } catch {
@@ -163,20 +209,63 @@ export async function listProjectPlans(cwd: string): Promise<PlanSummary[]> {
         }
       }
     }
-
-    plans.sort(
-      (a, b) => new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime()
-    );
-    return plans;
   } catch {
-    return [];
+    // ignore
   }
+
+  const plans = Array.from(planSummaries.values());
+  plans.sort(
+    (a, b) => new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime()
+  );
+  return plans;
 }
 
 export async function readProjectPlan(cwd: string, slug: string): Promise<Plan | null> {
   const docsDir = joinPath(cwd, '.docs');
-  const rootPath = joinPath(docsDir, `plan-${slug}.md`);
+  const planDir = joinPath(docsDir, 'plans', slug);
+  const hierarchicalRootPath = joinPath(planDir, 'plan.md');
 
+  // 1. Try hierarchical plan first
+  try {
+    const raw = await readTextFile(hierarchicalRootPath);
+    const rootDoc = parseDoc(raw, hierarchicalRootPath);
+    if (rootDoc) {
+      const mode = rootDoc.frontmatter.mode ?? 'deep';
+      const documents: PlanDocument[] = [rootDoc];
+
+      try {
+        const files = await readDirectory(planDir);
+        for (const file of files) {
+          if (!file.endsWith('.md') || file === 'plan.md') continue;
+          const docPath = joinPath(planDir, file);
+          try {
+            const docRaw = await readTextFile(docPath);
+            const doc = parseDoc(docRaw, docPath);
+            if (doc) {
+              documents.push(doc);
+            }
+          } catch {
+            // ignore
+          }
+        }
+      } catch {
+        // ignore
+      }
+
+      return {
+        slug,
+        mode,
+        format: 'hierarchical',
+        root: rootDoc,
+        documents,
+      };
+    }
+  } catch {
+    // Fall back to legacy flat
+  }
+
+  // 2. Try legacy flat plan
+  const rootPath = joinPath(docsDir, `plan-${slug}.md`);
   try {
     const raw = await readTextFile(rootPath);
     const rootDoc = parseDoc(raw, rootPath);
@@ -207,6 +296,7 @@ export async function readProjectPlan(cwd: string, slug: string): Promise<Plan |
     return {
       slug,
       mode,
+      format: 'legacy_flat',
       root: rootDoc,
       documents,
     };
@@ -223,15 +313,40 @@ export async function saveProjectDocument(
   changeSummary = 'Updated via desktop'
 ): Promise<{ success: boolean; version: string }> {
   const docsDir = joinPath(cwd, '.docs');
-  let filename = `${docType}-${slug}.md`;
-  if (docType === 'phase') {
-    filename = `phase-1-${slug}.md`;
-  }
-  const filePath = joinPath(docsDir, filename);
+  const planDir = joinPath(docsDir, 'plans', slug);
+  const hierarchicalFilename = getHierarchicalDocFilename(docType);
+  const hierarchicalPath = joinPath(planDir, hierarchicalFilename);
 
-  const raw = await readTextFile(filePath);
-  const doc = parseDoc(raw, filePath);
-  if (!doc) throw new Error(`Could not parse ${filePath}`);
+  let targetPath = hierarchicalPath;
+  let filename = hierarchicalFilename;
+
+  // Determine whether it's hierarchical or legacy
+  if (await fileExists(hierarchicalPath)) {
+    targetPath = hierarchicalPath;
+    filename = hierarchicalFilename;
+  } else if (docType === 'phase' && (await fileExists(joinPath(planDir, 'phase.md')))) {
+    targetPath = joinPath(planDir, 'phase.md');
+    filename = 'phase.md';
+  } else {
+    // Check legacy flat file
+    const legacyFilename = getLegacyDocFilename(slug, docType);
+    const legacyPath = joinPath(docsDir, legacyFilename);
+    if (await fileExists(legacyPath)) {
+      targetPath = legacyPath;
+      filename = legacyFilename;
+    } else if (await fileExists(planDir)) {
+      // Default to hierarchical if planDir exists
+      targetPath = hierarchicalPath;
+      filename = hierarchicalFilename;
+    } else {
+      targetPath = legacyPath;
+      filename = legacyFilename;
+    }
+  }
+
+  const raw = await readTextFile(targetPath);
+  const doc = parseDoc(raw, targetPath);
+  if (!doc) throw new Error(`Could not parse ${targetPath}`);
 
   const currentVersion = parseFloat(doc.frontmatter.version || '1.0');
   const nextVersion = (isNaN(currentVersion) ? 1.0 : currentVersion + 0.1).toFixed(1);
@@ -244,7 +359,7 @@ export async function saveProjectDocument(
   };
 
   const newContent = stringifyDoc(data as unknown as Record<string, unknown>, body);
-  await writeTextFile(filePath, newContent);
+  await writeTextFile(targetPath, newContent);
 
   // Append history
   const historyPath = joinPath(docsDir, '.history', `plan-${slug}.jsonl`);
@@ -274,21 +389,29 @@ export async function saveProjectDocument(
 
 export async function readProjectHistory(cwd: string, slug: string): Promise<HistoryEntry[]> {
   const historyPath = joinPath(cwd, '.docs', '.history', `plan-${slug}.jsonl`);
+  let raw = '';
   try {
-    const raw = await readTextFile(historyPath);
-    const lines = raw.trim().split('\n').filter((l) => l.trim().length > 0);
-    const entries: HistoryEntry[] = [];
-    for (const line of lines) {
-      try {
-        entries.push(JSON.parse(line));
-      } catch {
-        // Skip
-      }
-    }
-    return entries.reverse();
+    raw = await readTextFile(historyPath);
   } catch {
-    return [];
+    // Fallback: check without 'plan-' prefix
+    const altPath = joinPath(cwd, '.docs', '.history', `${slug}.jsonl`);
+    try {
+      raw = await readTextFile(altPath);
+    } catch {
+      return [];
+    }
   }
+
+  const lines = raw.trim().split('\n').filter((l) => l.trim().length > 0);
+  const entries: HistoryEntry[] = [];
+  for (const line of lines) {
+    try {
+      entries.push(JSON.parse(line));
+    } catch {
+      // Skip
+    }
+  }
+  return entries.reverse();
 }
 
 export async function initProjectPlan(cwd: string, name: string, mode: PlanMode): Promise<string> {
@@ -299,13 +422,16 @@ export async function initProjectPlan(cwd: string, name: string, mode: PlanMode)
     .replace(/^-+|-+$/g, '');
 
   const docsDir = joinPath(cwd, '.docs');
+  const planDir = joinPath(docsDir, 'plans', slug);
   await createDirectory(docsDir);
+  await createDirectory(joinPath(docsDir, 'plans'));
+  await createDirectory(planDir);
   await createDirectory(joinPath(docsDir, '.history'));
 
   const now = new Date().toISOString();
 
   if (mode === 'quick') {
-    const rootPath = joinPath(docsDir, `plan-${slug}.md`);
+    const rootPath = joinPath(planDir, 'plan.md');
     const fm = {
       id: crypto.randomUUID(),
       plan: slug,
@@ -324,11 +450,11 @@ export async function initProjectPlan(cwd: string, name: string, mode: PlanMode)
     await writeTextFile(rootPath, stringifyDoc(fm, body));
   } else {
     // Deep mode
-    const rootPath = joinPath(docsDir, `plan-${slug}.md`);
-    const scopePath = joinPath(docsDir, `scope-${slug}.md`);
-    const featurePath = joinPath(docsDir, `feature-${slug}.md`);
-    const phasePath = joinPath(docsDir, `phase-1-${slug}.md`);
-    const limitPath = joinPath(docsDir, `limitation-${slug}.md`);
+    const rootPath = joinPath(planDir, 'plan.md');
+    const scopePath = joinPath(planDir, 'scope.md');
+    const featurePath = joinPath(planDir, 'feature.md');
+    const phasePath = joinPath(planDir, 'phase-1.md');
+    const limitPath = joinPath(planDir, 'limitation.md');
 
     const rootFm = {
       id: crypto.randomUUID(),
@@ -348,7 +474,7 @@ export async function initProjectPlan(cwd: string, name: string, mode: PlanMode)
       rootPath,
       stringifyDoc(
         rootFm,
-        `# ${name}\n\n## Goal\n\n## Document Index\n- [Scope](./scope-${slug}.md)\n- [Feature Breakdown](./feature-${slug}.md)\n- [Phase 1 Implementation](./phase-1-${slug}.md)\n- [Limitations](./limitation-${slug}.md)\n`
+        `# ${name}\n\n## Goal\n\n## Document Index\n- [Scope](./scope.md)\n- [Feature Breakdown](./feature.md)\n- [Phase 1 Implementation](./phase-1.md)\n- [Limitations](./limitation.md)\n`
       )
     );
 
@@ -392,7 +518,7 @@ export async function initProjectPlan(cwd: string, name: string, mode: PlanMode)
     version: '1.0',
     summary: `Plan '${name}' created in ${mode} mode`,
     changedBy: 'desktop',
-    document: `plan-${slug}.md`,
+    document: 'plan.md',
     docType: 'plan',
   };
   await writeTextFile(historyPath, JSON.stringify(initialHistory) + '\n');
@@ -402,6 +528,26 @@ export async function initProjectPlan(cwd: string, name: string, mode: PlanMode)
 
 export async function deleteProjectPlan(cwd: string, slug: string): Promise<void> {
   const docsDir = joinPath(cwd, '.docs');
+  const planDir = joinPath(docsDir, 'plans', slug);
+
+  // 1. Delete hierarchical folder if exists
+  try {
+    if (await fileExists(planDir)) {
+      const planFiles = await readDirectory(planDir);
+      for (const file of planFiles) {
+        await removeFile(joinPath(planDir, file));
+      }
+      try {
+        await invoke('remove_directory', { path: planDir });
+      } catch {
+        // ignore
+      }
+    }
+  } catch {
+    // ignore
+  }
+
+  // 2. Delete legacy flat files if any
   try {
     const files = await readDirectory(docsDir);
     for (const file of files) {
@@ -417,4 +563,27 @@ export async function deleteProjectPlan(cwd: string, slug: string): Promise<void
     console.error(`Failed to delete plan ${slug}:`, e);
     throw e;
   }
+}
+
+export async function readProjectAgentActivity(cwd: string): Promise<{
+  events: any[];
+  lastUpdated: string;
+  activeAgent?: string;
+}> {
+  const activityPath = joinPath(cwd, '.plannic', '.agent_activity.json');
+  try {
+    if (await fileExists(activityPath)) {
+      const raw = await readTextFile(activityPath);
+      const parsed = JSON.parse(raw);
+      if (parsed && Array.isArray(parsed.events)) {
+        return parsed;
+      }
+    }
+  } catch {
+    // ignore
+  }
+  return {
+    events: [],
+    lastUpdated: new Date().toISOString(),
+  };
 }

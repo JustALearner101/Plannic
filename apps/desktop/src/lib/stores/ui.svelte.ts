@@ -32,3 +32,6 @@ export class UIStore {
 }
 
 export const uiStore = new UIStore();
+if (typeof window !== 'undefined') {
+  (window as any).__UI_STORE__ = uiStore;
+}

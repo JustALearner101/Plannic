@@ -1,47 +1,74 @@
-# Plannic
+<p align="center">
+  <a href="https://github.com/JustALearner101/Plannic">
+    <img src="./assets/logo.svg" alt="Plannic Logo" width="420" />
+  </a>
+</p>
 
-> **Structured Project Planning & Architecture Workbench for Solo Developers & AI Agents**
+<p align="center">
+  <strong>Structured Architecture, Living Specs &amp; Strategic Planning Workbench for Solo Developers &amp; AI Coding Agents</strong>
+</p>
 
-[![Bun](https://img.shields.io/badge/Runtime-Bun-black?logo=bun)](https://bun.sh/)
-[![Tauri](https://img.shields.io/badge/Desktop-Tauri%202-24C8D8?logo=tauri)](https://tauri.app/)
-[![Svelte 5](https://img.shields.io/badge/Frontend-Svelte%205-FF3E00?logo=svelte)](https://svelte.dev/)
-[![OpenTUI](https://img.shields.io/badge/CLI-OpenTUI-00DC82)](https://github.com/anomalyco/opentui)
-[![MCP](https://img.shields.io/badge/Protocol-Model%20Context%20Protocol-4A154B)](https://modelcontextprotocol.io/)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+<p align="center">
+  <a href="https://github.com/JustALearner101/Plannic/releases"><img src="https://img.shields.io/badge/Release-v0.2.0-38BDF8?logo=github" alt="Release v0.2.0" /></a>
+  <a href="https://bun.sh/"><img src="https://img.shields.io/badge/Runtime-Bun-black?logo=bun" alt="Bun" /></a>
+  <a href="https://tauri.app/"><img src="https://img.shields.io/badge/Desktop-Tauri%202-24C8D8?logo=tauri" alt="Tauri 2" /></a>
+  <a href="https://svelte.dev/"><img src="https://img.shields.io/badge/Frontend-Svelte%205-FF3E00?logo=svelte" alt="Svelte 5" /></a>
+  <a href="https://github.com/anomalyco/opentui"><img src="https://img.shields.io/badge/CLI-OpenTUI-00DC82" alt="OpenTUI" /></a>
+  <a href="https://modelcontextprotocol.io/"><img src="https://img.shields.io/badge/Protocol-Model%20Context%20Protocol-4A154B" alt="MCP" /></a>
+  <img src="https://img.shields.io/badge/E2E%20Tests-7%2F7%20Passed-34D399" alt="Tests 7/7 Passed" />
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License MIT" /></a>
+</p>
 
-Plannic adalah **local-first planning workbench** yang menggabungkan protokol **Model Context Protocol (MCP)**, aplikasi visual **Desktop (Tauri 2 + Svelte 5)**, dan **Terminal CLI (OpenTUI + SolidJS)** di atas fondasi penyimpanan dokumen Markdown lokal di `.docs/`.
+```text
+  ██████╗ ██╗      █████╗ ███╗   ██╗███╗   ██╗██╗ ██████╗
+  ██╔══██╗██║     ██╔══██╗████╗  ██║████╗  ██║██║██╔════╝
+  ██████╔╝██║     ███████║██╔██╗ ██║██╔██╗ ██║██║██║     
+  ██╔═══╝ ██║     ██╔══██║██║╚██╗██║██║╚██╗██║██║██║     
+  ██║     ███████╗██║  ██║██║ ╚████║██║ ╚████║██║╚██████╗
+  ╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═══╝╚═╝ ╚═════╝
+  PLANNIC / Architecture, Living Specs & Planning Workbench v0.2.0
+```
 
-Didesain dengan filosofi **Workshop Tool**: tenang, tanpa bloat, palet warna monochrome ketat (`#0F1117`), border 1px presisi, dan nol ketergantungan cloud.
+---
+
+Plannic adalah **local-first engineering workbench** yang menjembatani developer dan AI coding agents (*Claude Code, Antigravity, Cursor, Windsurf, Roo Code*) di atas satu sistem kebenaran universal (*single source of truth*) dalam format Markdown lokal di `.docs/`.
+
+Didesain dengan filosofi **Monochrome Workshop**: bersih, performan tinggi, palet warna workshop gelap (`#0F1117`), border 1px presisi, dan nol ketergantungan cloud database.
+
+> 🤖 **Working with an AI Coding Assistant?** See [AGENT_GUIDE.md](./AGENT_GUIDE.md) for the complete zero-shot onboarding runbook, MCP tool reference, testing guidelines, and auto-updater workflow.
 
 ---
 
 ## 🏛️ System Architecture
 
-Plannic mengoperasikan arsitektur multi-tier di mana AI coding agent dan developer manusia berkolaborasi di atas satu sumber kebenaran (*single source of truth*) yang tersimpan dalam format teks biasa di folder `.docs/`:
+Plannic mengoperasikan arsitektur multi-tier di mana AI coding agent, aplikasi desktop, dan terminal CLI beroperasi secara real-time di atas penyimpanan dokumen lokal:
 
 ```mermaid
 flowchart TD
     subgraph Clients["User & AI Clients"]
-        AI["🤖 AI Coding Agents\n(Claude Code / Cursor / Codex)"]
+        AI["🤖 AI Coding Agents\n(Claude Code / Antigravity / Cursor)"]
         CLI["💻 Developer Terminal\n(Plannic CLI / OpenTUI REPL)"]
         GUI["🖥️ Developer Desktop\n(Tauri 2 + Svelte 5 App)"]
     end
 
     subgraph Apps["Applications (apps/*)"]
-        MCP["apps/mcp-server\n(Stdio Transport, 8 Tools)"]
-        CLIA["apps/cli\n(Command REPL, Tab Autocomplete)"]
-        DESK["apps/desktop\n(Kanban, Node Graph, Markdown View)"]
+        MCP["apps/mcp-server\n(Stdio Transport, 19 Tools & Resources)"]
+        CLIA["apps/cli\n(Command REPL, ASCII Banner, Autocomplete)"]
+        DESK["apps/desktop\n(Ghost Cursor, Kanban, Node Graph, Auto-Updater)"]
     end
 
     subgraph Libs["Shared Libraries (packages/*)"]
-        CORE["packages/core\n(Types, Zod Schemas)"]
-        FS["packages/fs\n(YAML Frontmatter, Search, History)"]
+        CORE["packages/core\n(Types, Zod Schemas, Activity Stream)"]
+        FS["packages/fs\n(Hierarchical Plans, ADRs, Specs, Migrator)"]
     end
 
     subgraph Storage["Local Workspace (.docs/ & .plannic/)"]
-        CONFIG[".plannic/config.md\n(Planning Rules & Stack)"]
-        DOCS[".docs/*.md\n(Plan, Scope, Feature, Phase, Limitation)"]
-        HIST[".docs/.history/plan-*.jsonl\n(Append-only Audit Trail)"]
+        CONFIG[".plannic/config.md\n(Rules, Conventions & Tech Stack)"]
+        DOCS[".docs/plans/<slug>/*.md\n(Plan, Scope, Feature, Phase, Limitation)"]
+        ADRS[".docs/adrs/adr-*.md\n(Architecture Decision Records)"]
+        SPECS[".docs/specs/spec-*.md\n(Living System Specifications)"]
+        STREAM[".plannic/.agent_activity.json\n(Realtime Agent Activity Stream)"]
+        HIST[".docs/.history/*.jsonl\n(Audit Trail & Version Snapshots)"]
     end
 
     AI -- "JSON-RPC (stdio)" --> MCP
@@ -57,97 +84,124 @@ flowchart TD
 
 ---
 
-## ✨ Key Capabilities
+## ✨ Key Capabilities & Highlights
 
-### 1. 🤖 Dedicated MCP Server (8 Tools)
-Menyediakan interface terstruktur untuk AI Agent tanpa perlu mem-parsing teks manual:
-- `get_config`: Membaca aturan dan konvensi proyek dari `.plannic/config.md`.
-- `init_plan`: Menginisialisasi plan baru dalam mode Quick atau Deep.
-- `get_plan`: Mengambil pohon dokumen plan lengkap.
-- `update_document`: Memperbarui sub-dokumen markdown dengan kenaikan nomor versi semantik.
-- `move_task`: Mengubah status checklist task pada dokumen phase roadmap.
-- `list_plans`: Menampilkan daftar semua plan di proyek.
-- `search_plans`: Fuzzy search instan pada judul dan isi dokumen.
-- `get_history`: Mengambil riwayat audit changelog JSONL.
+### 1. 👻 Realtime Agent Ghost Cursor & Ambient HUD
+- **Ambient Glowing Border**: Saat AI agent memanggil MCP tool di terminal atau editor, batas desktop Plannic berpendar biru cyan (`#38bdf8`) menandakan agent sedang aktif merancang atau memodifikasi file.
+- **Ghost Cursor**: Kursor transparan agen AI melayang di atas Kanban board dan dokumen dengan badge nama agen, menampilkan kartu/tugas apa yang sedang disentuh atau dipindahkan.
+- **Top HUD Status**: Menampilkan pesan aktivitas agen secara ringkas di header (*"Moving task to In Progress..."*).
 
-### 2. 🖥️ Interactive Desktop GUI (Tauri 2 + Svelte 5)
-- **Interactive Kanban Board**: Visualisasi task checklist fase implementasi dengan kolom status dinamis (`todo`, `in_progress`, `done`, atau custom column), drag-and-drop interaktif, dan sinkronisasi dua arah dengan AI Agent.
-- **Node Graph View (Svelte Flow)**: Visualisasi graf relasi dokumen plan dan dependensi sub-dokumen, lengkap dengan zoom, pan, edge routing, dan Quick Inspector.
-- **Document Tree Sidebar**: Navigasi hierarki file plan (`plan`, `scope`, `feature`, `phase`, `limitation`).
+### 2. 📋 Architecture Decision Records (ADR) Engine
+- Dokumentasikan keputusan arsitektur penting secara formal di `.docs/adrs/`.
+- Lifecycle status standar: `proposed`, `accepted`, `rejected`, `superseded`.
+- Integrasi penuh dengan MCP tool (`init_adr`, `get_adr`, `list_adrs`) dan skill Antigravity `/adr`.
 
-### 3. ⌨️ OpenCode-Style Terminal CLI (OpenTUI + SolidJS)
-- **Command-Driven REPL**: Aliran feed scrollable di atas dengan input bar interaktif di bawah.
-- **Dynamic Tab Autocomplete**: Mendukung auto-completion seperti `cd <folder> [Tab]` untuk melengkapi nama perintah, slug plan proyek (`/open ` + `Tab`), sub-dokumen (`/doc ` + `Tab`), dan status (`/move ` + `Tab`).
-- **Zero-Glitch Layout**: Bebas dari masalah absolute overlay terminal; 100% flow layout.
-- **Full Clipboard Integration**: Dukungan paste `Ctrl+V` multi-platform dan tombol `Esc` untuk keluar bersih tanpa mengorbankan `Ctrl+C` copy terminal.
+### 3. 📐 Living Specifications & System Contracts Engine
+- Pertahankan kontrak modul, format data, dan spesifikasi API di `.docs/specs/`.
+- Menyediakan riwayat versi dan snapshot audit trail.
+- Didukung oleh tool MCP (`init_spec`, `get_spec`, `update_spec`, `list_specs`) dan skill `/spec`.
 
-### 4. 📋 Document Tree & The 5-Step "Grill Mode"
-- **Quick Mode**: 1 file dokumen (`plan-<slug>.md`) untuk tugas terisolasi dan bugfix cepat.
-- **Deep Mode**: 5 file dokumen terstruktur (`plan`, `scope`, `feature`, `phase`, `limitation`) untuk arsitektur kompleks.
-- **Grill Mode Workflow**: AI Agent mewawancarai developer dengan 3–5 pertanyaan klarifikasi strategis sebelum mulai merancang dokumen plan untuk mencegah *scope creep*.
+### 4. 🗂️ Hierarchical Multi-Document Plans
+- Rencana proyek tersimpan rapi dalam folder mandiri `.docs/plans/<slug>/`:
+  - `plan.md`: Ringkasan eksekutif, status, dan indeks dokumen.
+  - `scope.md`: Batasan eksplisit in-scope & out-of-scope.
+  - `feature.md`: Rincian fitur fungsional & acceptance criteria.
+  - `phase-*.md`: Roadmap deliverable dengan checklist task interaktif.
+  - `limitation.md`: Batasan teknis, edge case, dan technical debt.
+- Dilengkapi migrator otomatis dari format flat legacy (`bun run migrate-docs`).
+
+### 5. ⊞ Interactive Kanban Board & Milestone Graph
+- Visualisasi status task per-fase (`todo`, `in_progress`, `done`, atau custom column) dengan drag-and-drop.
+- **Milestone Graph**: Visualisasi rantai dependensi antar-fase dan progress bar persentase penyelesaian task.
+- Sinkronisasi instan dua arah antara UI desktop dan perubahan yang dibuat agen via `move_task` atau `advance_phase`.
+
+### 6. 🔄 In-App Zero-Touch Auto-Updater
+- Didukung oleh `@tauri-apps/plugin-updater` dan GitHub Releases.
+- Notifikasi floating toast dark workshop dengan deteksi versi otomatis saat aplikasi dijalankan.
+- Tampilan catatan rilis (*release notes*), *progress bar* download byte real-time, dan tombol **"Update & Restart"** sekali klik.
+- Paket update ditandatangani secara kriptografis menggunakan Minisign (`.sig`).
+
+### 7. 🤖 Model Context Protocol (MCP) Server
+- Menyediakan 19 tools & resources terstandarisasi untuk LLM:
+  - Planning: `init_plan`, `get_plan`, `update_document`, `list_plans`, `search_plans`, `get_history`
+  - Phases & Tasks: `move_task`, `add_phase`, `advance_phase`, `get_execution_progress`
+  - ADRs: `init_adr`, `get_adr`, `list_adrs`
+  - Specs: `init_spec`, `get_spec`, `update_spec`, `list_specs`
+  - Migration & Config: `get_config`, `migrate_plan`
+
+### 8. ⌨️ OpenTUI Terminal Workbench
+- TUI interaktif dengan navigasi keyboard, tab autocomplete, dan palette perintah (`Ctrl+K`).
+- ASCII art banner berdesain retro modern.
+- Menjalankan perintah non-interaktif langsung dari command-line terminal (`plan list`, `plan search`, `plan create`).
 
 ---
 
 ## 📦 Monorepo Structure
 
-```
-plannic/
+```text
+Plannic/
 ├── packages/
-│   ├── core/               # Shared TypeScript interfaces & Zod validation schemas
-│   └── fs/                 # Local filesystem engine (.docs/, YAML, history, search, tasks)
+│   ├── core/                  # Shared Zod schemas, TypeScript types, paths & activity schemas
+│   └── fs/                    # Filesystem engine (Hierarchical docs, ADRs, Specs, Migrator, Tasks)
 ├── apps/
-│   ├── mcp-server/         # MCP stdio server implementing 8 planning tools
-│   ├── desktop/            # Tauri 2 + Svelte 5 visual workbench app
-│   └── cli/                # OpenTUI + SolidJS terminal REPL application
-├── docs/                   # Developer documentation & technical specs
-└── .docs/                  # Runtime planning documents & .history/ JSONL audit trails
+│   ├── desktop/               # Tauri 2 + Svelte 5 visual workbench (Kanban, Ghost Cursor, Updater)
+│   ├── mcp-server/            # stdio MCP server (19 planning, ADR & spec tools)
+│   └── cli/                   # OpenTUI-powered interactive terminal interface
+├── .docs/                     # Universal Architecture & Planning system of record
+│   ├── plans/<slug>/          # Hierarchical multi-document plans
+│   ├── adrs/                  # Architecture Decision Records
+│   └── specs/                 # Living system specifications & API contracts
+├── .plannic/                  # Workspace configuration (.plannic/config.md) & activity stream
+├── .github/workflows/         # CI/CD pipelines (e2e.yml, release.yml)
+├── e2e/                       # 7-Suite Unified E2E, Playwright & Stability Benchmark Runner
+├── scripts/                   # Helper scripts (version bump, migrations)
+└── release/                   # Distribution binaries (.exe installer, standalone app & mcp binary)
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Quick Start
 
 ### Prerequisites
-- [Bun](https://bun.sh/) >= 1.2 (Package manager & runtime utama)
-- [Rust & Cargo](https://rustup.rs/) (Diperlukan jika menjalankan aplikasi Desktop Tauri)
+- [Bun](https://bun.sh/) >= 1.2
+- [Rust & Cargo](https://rustup.rs/) (Khusus jika ingin mem-build desktop app secara lokal)
 
 ### 1. Install Dependencies
 ```bash
 bun install
 ```
 
-### 2. Menjalankan Terminal CLI (OpenTUI)
+### 2. Jalankan Terminal CLI
 ```bash
-# Mode REPL Interaktif
+# Buka mode TUI interaktif:
 bun run plan
 
-# Mode Non-Interaktif
+# Atau perintah langsung (non-interaktif):
 bun run plan list
-bun run plan search "kanban"
+bun run plan search "auth"
 bun run plan create "Payment Gateway" --mode deep
 ```
 
-### 3. Menjalankan Desktop GUI
+### 3. Jalankan Aplikasi Desktop
 ```bash
-# Mode Development Desktop (Tauri)
+# Mode desktop native (Tauri 2 hot-reload):
 bun run dev:desktop
 
-# Mode Web Browser (Vite dev server)
+# Mode web browser (Vite dev server di port 5173):
 bun run dev:web
 ```
 
-### 4. Menjalankan MCP Server
+### 4. Jalankan MCP Server
 ```bash
 bun run dev:mcp
 ```
 
 ---
 
-## 🔌 MCP Client Integration
+## 🔌 Setup MCP Client (AI Assistant)
 
-Untuk menghubungkan Plannic dengan AI Coding Agents:
+Tambahkan konfigurasi berikut ke AI editor Anda (`.mcp.json` di Antigravity, Claude Code, atau Cursor):
 
-### Claude Code / Claude Desktop (`.mcp.json`)
 ```json
 {
   "mcpServers": {
@@ -159,12 +213,12 @@ Untuk menghubungkan Plannic dengan AI Coding Agents:
 }
 ```
 
-### Binary Precompiled (`plannic-mcp.exe`)
+*Atau menggunakan binary mandiri precompiled (`release/plannic-mcp.exe`):*
 ```json
 {
   "mcpServers": {
     "plannic": {
-      "command": "D:/Project/Plannic/plannic-mcp.exe"
+      "command": "D:/Project/Plannic/release/plannic-mcp.exe"
     }
   }
 }
@@ -172,31 +226,46 @@ Untuk menghubungkan Plannic dengan AI Coding Agents:
 
 ---
 
-## 📚 Technical Documentation
+## 🏷️ Versioning & Automated Releases
 
-Untuk spesifikasi teknis mendalam dan logika internal sistem, pelajari dokumen di folder `docs/`:
+Plannic mengikuti aturan **Semantic Versioning** (`vMAJOR.MINOR.PATCH`).
 
-| Dokumen | Deskripsi |
-| :--- | :--- |
-| [docs/PRD.md](./docs/PRD.md) | Product Requirements Document & visi dasar Plannic |
-| [docs/GUI.md](./docs/GUI.md) | Design tokens, visual hierarchy, dan spesifikasi antarmuka Desktop |
-| [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) | Topologi sistem, monorepo boundaries, package deep-dive, dan model IPC |
-| [docs/LOGIC.md](./docs/LOGIC.md) | Logika bisnis, 5-Step Grill Mode, task state machine, versioning, dan search engine |
-| [docs/MCP.md](./docs/MCP.md) | Panduan lengkap 8 tools Model Context Protocol (MCP) & integrasi AI Agent |
-| [docs/DESKTOP.md](./docs/DESKTOP.md) | Panduan Desktop Workbench, Interactive Kanban Board, & Node Graph View |
-| [docs/CLI.md](./docs/CLI.md) | Panduan lengkap Terminal UI, daftar 11 slash commands, dan Tab autocomplete |
+### 1. Bumping Versi (Satu Perintah)
+```bash
+# Patch (0.2.0 -> 0.2.1)
+bun run bump patch
+
+# Minor (0.2.0 -> 0.3.0)
+bun run bump minor
+
+# Versi spesifik
+bun run bump 0.2.5
+```
+*(Otomatis mensinkronkan `tauri.conf.json`, `Cargo.toml`, dan semua manifest `package.json`).*
+
+### 2. Memicu Rilis CI/CD Otomatis
+```bash
+git commit -am "chore: release v0.2.1"
+git tag v0.2.1
+git push origin main --tags
+```
+Pipeline [`.github/workflows/release.yml`](./.github/workflows/release.yml) akan otomatis memvalidasi pengujian, mem-build installer Windows (`.exe` NSIS & `.msi`), menandatangani paket update, dan mempublikasikannya ke GitHub Releases.
 
 ---
 
-## 🛠️ Verification & Quality Assurance
+## 🧪 Quality Assurance & Testing Suite
 
-Semua package di dalam monorepo divalidasi dengan typecheck ketat:
+Seluruh ekosistem Plannic divalidasi dengan rangkaian pengujian komprehensif:
+
 ```bash
-# Typecheck seluruh monorepo
+# 1. Monorepo static typecheck (TypeScript & Svelte):
 bun run typecheck
 
-# Build binary mandiri CLI
-bun run --filter @plannic/cli build
+# 2. Unit tests (packages/core, packages/fs, apps/mcp-server):
+bun run test:all
+
+# 3. 7-Suite Unified E2E & Stability Runner (termasuk Playwright headless browser):
+bun run test:e2e
 ```
 
 ---

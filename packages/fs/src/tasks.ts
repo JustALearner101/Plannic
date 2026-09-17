@@ -1,5 +1,6 @@
 import { readPlan } from "./reader.js";
 import { updateDocument } from "./writer.js";
+import { emitAgentActivity } from "./activity.js";
 import type { MoveTaskOutput } from "@plannic/core";
 
 const CHECKLIST_REGEX = /^(\s*-\s*\[)([a-zA-Z0-9_\-\/ ]*)(\]\s*)(.+)$/;
@@ -88,10 +89,27 @@ export async function moveTask(
         doc.type,
         newBody,
         comment ?? `Task "${matchedTitle}" moved from [${previousStatus}] to [${newStatus}]`,
-        changedBy
+        changedBy,
+        doc.path
       );
 
       const filename = doc.path.split(/[/\\]/).pop() || doc.path;
+
+      try {
+        await emitAgentActivity(cwd, {
+          agent: changedBy === "ai-agent" ? "Antigravity" : changedBy,
+          action: "move_task",
+          status: "completed",
+          planSlug: slug,
+          taskTitle: matchedTitle,
+          fromStatus: previousStatus,
+          toStatus: cleanNewStatus,
+          phaseSlug: doc.slug || doc.type,
+          comment,
+        });
+      } catch {
+        // Activity emission is non-blocking/graceful
+      }
 
       return {
         success: true,

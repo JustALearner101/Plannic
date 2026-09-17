@@ -1,0 +1,23 @@
+{
+  "plannic-task-tracker": {
+    "PostToolUse": [
+      {
+        "matcher": "replace_file_content|write_to_file",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun run D:/Project/Plannic/packages/fs/scripts/hook-task-check.ts",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": "bun run D:/Project/Plannic/packages/fs/scripts/hook-session-summary.ts",
+        "timeout": 5
+      }
+    ]
+  }
+}

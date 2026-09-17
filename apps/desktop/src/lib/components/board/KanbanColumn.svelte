@@ -2,7 +2,7 @@
   import { dndzone } from 'svelte-dnd-action';
   import type { KanbanColumnData, KanbanTask } from '../../types/board.js';
   import KanbanCard from './KanbanCard.svelte';
-  import { boardStore } from '../../stores/board.svelte.js';
+  import { boardStore } from '$lib/stores/board.svelte.js';
 
   let { column }: { column: KanbanColumnData } = $props();
 
@@ -31,7 +31,7 @@
   }
 </script>
 
-<div class="kanban-column">
+<div class="kanban-column" data-column-id={column.id}>
   <div class="column-header">
     <div class="header-left">
       <span
