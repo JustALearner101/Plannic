@@ -1,0 +1,12 @@
+# GitHub Linguist Overrides
+# Treat MDX and docs as documentation so they don't skew repository language stats
+*.mdx linguist-documentation
+*.md linguist-documentation
+docs/** linguist-documentation
+.docs/** linguist-documentation
+
+# Treat agent skills and external reference files as vendored
+.agents/** linguist-vendored
+.agents/** linguist-documentation
+reference/** linguist-vendored
+e2e/harness/** linguist-vendored
