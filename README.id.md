@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <strong>English</strong> | <a href="README.id.md">Bahasa Indonesia</a>
+  <strong>Bahasa Indonesia</strong> | <a href="README.md">English</a>
 </p>
 
 <p align="center">
@@ -35,17 +35,17 @@
 
 ---
 
-Plannic is a **local-first engineering workbench** that bridges human software engineers and AI coding agents (*Claude Code, Antigravity, Cursor, Windsurf, Roo Code*) over a universal, file-backed single source of truth in local Markdown under `.docs/`.
+Plannic adalah **local-first engineering workbench** yang menjembatani developer dan AI coding agents (*Claude Code, Antigravity, Cursor, Windsurf, Roo Code*) di atas satu sistem kebenaran universal (*single source of truth*) dalam format Markdown lokal di `.docs/`.
 
-Crafted around the **Monochrome Workshop** design philosophy: zero bloat, high performance, strict dark workshop palette (`#0F1117`), razor-sharp 1px borders, and zero cloud or SaaS database dependencies.
+Didesain dengan filosofi **Monochrome Workshop**: bersih, performan tinggi, palet warna workshop gelap (`#0F1117`), border 1px presisi, dan nol ketergantungan cloud database.
 
-> 🤖 **Working with an AI Coding Assistant?** See [AGENT_GUIDE.md](./AGENT_GUIDE.md) for the complete zero-shot onboarding runbook, MCP tool reference, testing guidelines, and auto-updater workflow.
+> 🤖 **Bekerja dengan AI Coding Assistant?** Lihat [AGENT_GUIDE.md](./AGENT_GUIDE.md) untuk panduan runbook onboarding instan, referensi MCP tools, pedoman pengujian, dan workflow rilis otomatis.
 
 ---
 
-## 🏛️ System Architecture
+## 🏛️ Arsitektur Sistem
 
-Plannic implements a multi-tier local topology where AI agents, the native desktop app, and the terminal CLI collaborate simultaneously over local files:
+Plannic mengoperasikan arsitektur multi-tier di mana AI coding agent, aplikasi desktop, dan terminal CLI beroperasi secara real-time di atas penyimpanan dokumen lokal:
 
 ```mermaid
 flowchart TD
@@ -88,59 +88,59 @@ flowchart TD
 
 ---
 
-## ✨ Key Capabilities & Highlights
+## ✨ Fitur & Kapabilitas Utama
 
 ### 1. 👻 Realtime Agent Ghost Cursor & Ambient HUD
-- **Ambient Glowing Border**: When an AI agent executes an MCP tool in your terminal or IDE, the desktop window's perimeter glows with an electric cyan border (`#38bdf8`), providing immediate visual confirmation that the agent is actively planning or modifying files.
-- **Ghost Cursor**: A semi-transparent AI cursor floats across the Kanban board and documents with an agent badge, visually following what task card or document the AI is manipulating in real time.
-- **Top Activity HUD**: Displays a concise, real-time message in the desktop header (*e.g., "Moving task to In Progress..."*).
+- **Ambient Glowing Border**: Saat AI agent memanggil MCP tool di terminal atau editor, batas desktop Plannic berpendar biru cyan (`#38bdf8`) menandakan agent sedang aktif merancang atau memodifikasi file.
+- **Ghost Cursor**: Kursor transparan agen AI melayang di atas Kanban board dan dokumen dengan badge nama agen, menampilkan kartu/tugas apa yang sedang disentuh atau dipindahkan secara real-time.
+- **Top HUD Status**: Menampilkan pesan aktivitas agen secara ringkas di header (*"Moving task to In Progress..."*).
 
 ### 2. 📋 Architecture Decision Records (ADR) Engine
-- Formally record critical architectural decisions in `.docs/adrs/`.
-- Standardized lifecycle states: `proposed`, `accepted`, `rejected`, `superseded`.
-- Full MCP integration (`init_adr`, `get_adr`, `list_adrs`) and Antigravity `/adr` slash command.
+- Dokumentasikan keputusan arsitektur penting secara formal di `.docs/adrs/`.
+- Lifecycle status standar: `proposed`, `accepted`, `rejected`, `superseded`.
+- Integrasi penuh dengan MCP tool (`init_adr`, `get_adr`, `list_adrs`) dan skill Antigravity `/adr`.
 
 ### 3. 📐 Living Specifications & System Contracts Engine
-- Maintain module contracts, data models, and API specifications in `.docs/specs/`.
-- Automatic semantic versioning and append-only audit trail logging.
-- Powered by MCP tools (`init_spec`, `get_spec`, `update_spec`, `list_specs`) and the `/spec` slash command.
+- Pertahankan kontrak modul, format data, dan spesifikasi API di `.docs/specs/`.
+- Menyediakan riwayat versi dan snapshot audit trail.
+- Didukung oleh tool MCP (`init_spec`, `get_spec`, `update_spec`, `list_specs`) dan skill `/spec`.
 
 ### 4. 🗂️ Hierarchical Multi-Document Plans
-- Complex plans are organized cleanly in dedicated folders under `.docs/plans/<slug>/`:
-  - `plan.md`: Executive summary, mode, status, and document index.
-  - `scope.md`: Explicit in-scope and out-of-scope boundaries.
-  - `feature.md`: Functional feature breakdown and acceptance criteria.
-  - `phase-*.md`: Milestone deliverables with interactive markdown task checklists.
-  - `limitation.md`: Technical trade-offs, edge cases, and known limitations.
-- Built-in migration tool from flat legacy docs (`bun run migrate-docs`).
+- Rencana proyek tersimpan rapi dalam folder mandiri `.docs/plans/<slug>/`:
+  - `plan.md`: Ringkasan eksekutif, status, dan indeks dokumen.
+  - `scope.md`: Batasan eksplisit in-scope & out-of-scope.
+  - `feature.md`: Rincian fitur fungsional & acceptance criteria.
+  - `phase-*.md`: Roadmap deliverable dengan checklist task interaktif.
+  - `limitation.md`: Batasan teknis, edge case, dan technical debt.
+- Dilengkapi migrator otomatis dari format flat legacy (`bun run migrate-docs`).
 
 ### 5. ⊞ Interactive Kanban Board & Milestone Graph
-- Drag-and-drop task card management across status columns (`todo`, `in_progress`, `done`, or custom columns).
-- **Milestone Graph**: Visualizes cross-phase dependencies with animated progress bars.
-- Instant, 2-way real-time synchronization between the desktop GUI and AI agent calls to `move_task` or `advance_phase`.
+- Visualisasi status task per-fase (`todo`, `in_progress`, `done`, atau custom column) dengan drag-and-drop.
+- **Milestone Graph**: Visualisasi rantai dependensi antar-fase dan progress bar persentase penyelesaian task.
+- Sinkronisasi instan dua arah antara UI desktop dan perubahan yang dibuat agen via `move_task` atau `advance_phase`.
 
 ### 6. 🔄 In-App Zero-Touch Auto-Updater
-- Powered by `@tauri-apps/plugin-updater` and GitHub Releases.
-- Dark floating toast notification with automatic startup version check.
-- Shows release notes, real-time download progress bar, and a single-click **"Update & Restart"** action.
-- Packages are cryptographically signed using Minisign (`.sig`).
+- Didukung oleh `@tauri-apps/plugin-updater` dan GitHub Releases.
+- Notifikasi floating toast dark workshop dengan deteksi versi otomatis saat aplikasi dijalankan.
+- Tampilan catatan rilis (*release notes*), *progress bar* download byte real-time, dan tombol **"Update & Restart"** sekali klik.
+- Paket update ditandatangani secara kriptografis menggunakan Minisign (`.sig`).
 
 ### 7. 🤖 Model Context Protocol (MCP) Server
-- Exposes 19 standardized tools & resources for modern LLMs:
-  - **Planning**: `init_plan`, `get_plan`, `update_document`, `list_plans`, `search_plans`, `get_history`
-  - **Phases & Tasks**: `move_task`, `add_phase`, `advance_phase`, `get_execution_progress`
-  - **ADRs**: `init_adr`, `get_adr`, `list_adrs`
-  - **Specs**: `init_spec`, `get_spec`, `update_spec`, `list_specs`
-  - **Migration & Config**: `get_config`, `migrate_plan`
+- Menyediakan 19 tools & resources terstandarisasi untuk LLM:
+  - Planning: `init_plan`, `get_plan`, `update_document`, `list_plans`, `search_plans`, `get_history`
+  - Phases & Tasks: `move_task`, `add_phase`, `advance_phase`, `get_execution_progress`
+  - ADRs: `init_adr`, `get_adr`, `list_adrs`
+  - Specs: `init_spec`, `get_spec`, `update_spec`, `list_specs`
+  - Migration & Config: `get_config`, `migrate_plan`
 
 ### 8. ⌨️ OpenTUI Terminal Workbench
-- Interactive keyboard-driven TUI with prompt bar, tab autocomplete, and command palette (`Ctrl+K`).
-- Modern retro ASCII art banner on startup and help commands.
-- Non-interactive direct execution commands (`plan list`, `plan search`, `plan create`).
+- TUI interaktif dengan navigasi keyboard, tab autocomplete, dan palette perintah (`Ctrl+K`).
+- ASCII art banner berdesain retro modern.
+- Menjalankan perintah non-interaktif langsung dari command-line terminal (`plan list`, `plan search`, `plan create`).
 
 ---
 
-## 📦 Monorepo Structure
+## 📦 Struktur Monorepo
 
 ```text
 Plannic/
@@ -164,38 +164,38 @@ Plannic/
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Panduan Memulai
 
-### Prerequisites
+### Prasyarat
 - [Bun](https://bun.sh/) >= 1.2
-- [Rust & Cargo](https://rustup.rs/) (Only needed if compiling the native Tauri desktop app locally)
+- [Rust & Cargo](https://rustup.rs/) (Khusus jika ingin mem-build desktop app secara lokal)
 
 ### 1. Install Dependencies
 ```bash
 bun install
 ```
 
-### 2. Launch the Terminal CLI
+### 2. Jalankan Terminal CLI
 ```bash
-# Interactive TUI mode:
+# Buka mode TUI interaktif:
 bun run plan
 
-# Direct non-interactive commands:
+# Atau perintah langsung (non-interaktif):
 bun run plan list
 bun run plan search "auth"
 bun run plan create "Payment Gateway" --mode deep
 ```
 
-### 3. Launch the Desktop App
+### 3. Jalankan Aplikasi Desktop
 ```bash
-# Native desktop mode (Tauri 2 hot-reload):
+# Mode desktop native (Tauri 2 hot-reload):
 bun run dev:desktop
 
-# Web browser mode (Vite dev server on port 5173):
+# Mode web browser (Vite dev server di port 5173):
 bun run dev:web
 ```
 
-### 4. Run the MCP Server
+### 4. Jalankan MCP Server
 ```bash
 bun run dev:mcp
 ```
@@ -204,7 +204,7 @@ bun run dev:mcp
 
 ## 🔌 Setup MCP Client (AI Assistant)
 
-Add Plannic to your AI coding assistant configuration (`.mcp.json` in Antigravity, Claude Code, or Cursor):
+Tambahkan konfigurasi berikut ke AI editor Anda (`.mcp.json` di Antigravity, Claude Code, atau Cursor):
 
 ```json
 {
@@ -217,7 +217,7 @@ Add Plannic to your AI coding assistant configuration (`.mcp.json` in Antigravit
 }
 ```
 
-*Or using the standalone precompiled binary (`release/plannic-mcp.exe`):*
+*Atau menggunakan binary mandiri precompiled (`release/plannic-mcp.exe`):*
 ```json
 {
   "mcpServers": {
@@ -232,9 +232,9 @@ Add Plannic to your AI coding assistant configuration (`.mcp.json` in Antigravit
 
 ## 🏷️ Versioning & Automated Releases
 
-Plannic follows strict **Semantic Versioning** (`vMAJOR.MINOR.PATCH`).
+Plannic mengikuti aturan **Semantic Versioning** (`vMAJOR.MINOR.PATCH`).
 
-### 1. Bumping Version (Single Command)
+### 1. Bumping Versi (Satu Perintah)
 ```bash
 # Patch (0.2.0 -> 0.2.1)
 bun run bump patch
@@ -242,24 +242,24 @@ bun run bump patch
 # Minor (0.2.0 -> 0.3.0)
 bun run bump minor
 
-# Specific version
+# Versi spesifik
 bun run bump 0.2.5
 ```
-*(Automatically synchronizes `tauri.conf.json`, `Cargo.toml`, and all `package.json` manifests).*
+*(Otomatis mensinkronkan `tauri.conf.json`, `Cargo.toml`, dan semua manifest `package.json`).*
 
-### 2. Triggering Automated CI/CD Releases
+### 2. Memicu Rilis CI/CD Otomatis
 ```bash
 git commit -am "chore: release v0.2.1"
 git tag v0.2.1
 git push origin main --tags
 ```
-The [`.github/workflows/release.yml`](./.github/workflows/release.yml) pipeline automatically verifies the test suite, builds Windows installers (`.exe` NSIS & `.msi`), signs the updater package, and publishes everything to GitHub Releases.
+Pipeline [`.github/workflows/release.yml`](./.github/workflows/release.yml) akan otomatis memvalidasi pengujian, mem-build installer Windows (`.exe` NSIS & `.msi`), menandatangani paket update, dan mempublikasikannya ke GitHub Releases.
 
 ---
 
 ## 🧪 Quality Assurance & Testing Suite
 
-The entire Plannic ecosystem is validated by a comprehensive testing pyramid:
+Seluruh ekosistem Plannic divalidasi dengan rangkaian pengujian komprehensif:
 
 ```bash
 # 1. Monorepo static typecheck (TypeScript & Svelte):
@@ -268,11 +268,11 @@ bun run typecheck
 # 2. Unit tests (packages/core, packages/fs, apps/mcp-server):
 bun run test:all
 
-# 3. 7-Suite Unified E2E & Stability Runner (including Playwright headless browser):
+# 3. 7-Suite Unified E2E & Stability Runner (termasuk Playwright headless browser):
 bun run test:e2e
 ```
 
 ---
 
-## 📄 License
+## 📄 Lisensi
 MIT © [JustALearner101 / Atar](https://github.com/JustALearner101/Plannic)
