@@ -16,5 +16,5 @@ export const PLANNIC_ASCII_COMPACT = `
 export function printAsciiBanner(compact = false) {
   const logo = compact ? PLANNIC_ASCII_COMPACT : PLANNIC_ASCII_LOGO;
   console.log(`\x1b[1m\x1b[36m${logo}\x1b[0m`);
-  console.log(`  \x1b[1m\x1b[38;2;56;189;248mPLANNIC\x1b[0m \x1b[90m/\x1b[0m \x1b[37mArchitecture, Living Specs & Planning Workbench\x1b[0m \x1b[90mv0.2.0\x1b[0m\n`);
+  console.log(`  \x1b[1m\x1b[38;2;56;189;248mPlannic CLI\x1b[0m \x1b[90m/\x1b[0m \x1b[37mArchitecture, Living Specs & Planning Workbench\x1b[0m \x1b[90mv0.2.0\x1b[0m\n`);
 }

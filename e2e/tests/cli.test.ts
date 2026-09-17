@@ -36,7 +36,8 @@ describe("Phase 3: CLI Commands & Terminal Interface E2E", () => {
 
       const version = await runCli(ws.path, ["--version"]);
       expect(version.code).toBe(0);
-      expect(version.stdout).toContain("Plannic CLI v0.1.0");
+      expect(version.stdout).toContain("Plannic CLI");
+      expect(version.stdout).toContain("v0.2.0");
     });
   });
 
