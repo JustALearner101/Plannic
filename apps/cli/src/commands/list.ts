@@ -1,4 +1,4 @@
-import { listPlans } from "@plannic/fs";
+import { listPlans } from "@plannic/headless";
 
 export async function listCommand(cwd: string, args: string[]) {
   const isJson = args.includes("--json");

@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { MigratePlansInputSchema } from "@plannic/core";
-import { migrateAllPlans } from "@plannic/fs";
+import { migrateAllPlans } from "@plannic/headless";
 
 export function registerMigratePlan(server: McpServer) {
   server.registerTool(

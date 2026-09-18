@@ -17,6 +17,7 @@
     "@opentui/solid": "^0.5.11",
     "@plannic/core": "workspace:*",
     "@plannic/fs": "workspace:*",
+    "@plannic/headless": "workspace:*",
     "solid-js": "^1.9.15"
   },
   "devDependencies": {

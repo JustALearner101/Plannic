@@ -19,7 +19,7 @@
   <a href="https://svelte.dev/"><img src="https://img.shields.io/badge/Frontend-Svelte%205-FF3E00?logo=svelte" alt="Svelte 5" /></a>
   <a href="https://github.com/anomalyco/opentui"><img src="https://img.shields.io/badge/CLI-OpenTUI-00DC82" alt="OpenTUI" /></a>
   <a href="https://modelcontextprotocol.io/"><img src="https://img.shields.io/badge/Protocol-Model%20Context%20Protocol-4A154B" alt="MCP" /></a>
-  <img src="https://img.shields.io/badge/E2E%20Tests-7%2F7%20Passed-34D399" alt="Tests 7/7 Passed" />
+  <img src="https://img.shields.io/badge/E2E%20Tests-CI%20Gated-38BDF8" alt="E2E tests CI gated" />
   <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License MIT" /></a>
 </p>
 
@@ -272,7 +272,66 @@ bun run test:all
 bun run test:e2e
 ```
 
+## 📊 Planning Benchmark: Better Plans, Less Guesswork
+
+Plannic is designed to solve a specific weakness in default AI-agent planning: plans often sound plausible while missing repository boundaries, dependencies, and architectural decisions.
+
+Our first paired benchmark compares the same five tasks with and without Plannic's structured planning tools:
+
+```mermaid
+xychart-beta
+    title "Baseline vs Plannic Plan Score (0–4)"
+    x-axis [Config, Search, History, Refactor, Governance]
+    y-axis "Score" 0 --> 4
+    line [1, 0, 0, 0, 0]
+    line [1, 2, 2, 1, 2]
+```
+
+`Line 1 = baseline plan` · `Line 2 = plan with Plannic`
+
+| Task | Baseline | Plannic |
+|---|---:|---:|
+| Config validation | 1/4 | 1/4 |
+| Cross-module search | 0/4 | 2/4 |
+| History API | 0/4 | 2/4 |
+| Task parser refactor | 0/4 | 1/4 |
+| Plan governance | 0/4 | 2/4 |
+
+| Aggregate | Baseline | Plannic | Change |
+|---|---:|---:|---:|
+| Mean plan score | 0.2/4 | 1.6/4 | **+1.4** |
+
+**Signal:** Plannic's strongest lift appears on cross-module and architecture-heavy tasks—the exact cases where an agent benefits from explicit context, decisions, and execution boundaries.
+
+The initial signal: Plannic produced stronger plans on 3 of 5 architecture-oriented tasks, while matching or improving the other 2. This is a preliminary harness result—not a claim of implementation uplift yet. The next benchmark stage uses real paired implementation patches to measure test success, scope drift, and correction effort.
+
+Run it locally with `bun run benchmark:planning`. Full notes and raw methodology are in [`benchmarks/planning/VALID-RUN-RESULTS.md`](./benchmarks/planning/VALID-RUN-RESULTS.md).
+
 ---
+
+### Install headless mode
+
+For AI agents, CI, and automation without a UI. The installer supports Linux/macOS x64 and ARM64, plus Windows x64. Every artifact is verified with SHA-256.
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/JustALearner101/Plannic/main/scripts/install-headless.sh | sh
+```
+
+On Windows PowerShell:
+
+```powershell
+irm https://raw.githubusercontent.com/JustALearner101/Plannic/main/scripts/install-headless.ps1 | iex
+```
+
+Set `PLANNIC_REPO` or `PLANNIC_INSTALL_DIR` to override the defaults.
+
+After installation, open a new terminal and verify it with:
+
+```text
+plannic --help
+```
+
+`plannic` and `plannic-headless` are both available; on Windows the installer adds the install directory to your User `PATH` automatically.
 
 ## 📄 License
 MIT © [JustALearner101 / Atar](https://github.com/JustALearner101/Plannic)

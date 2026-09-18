@@ -1,4 +1,4 @@
-import { readPlan } from "@plannic/fs";
+import { readPlan } from "@plannic/headless";
 
 export async function openCommand(
   cwd: string,

@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { GetHistoryInputSchema } from "@plannic/core";
-import { readHistory } from "@plannic/fs";
+import { readHistory } from "@plannic/headless";
 
 export function registerGetHistory(server: McpServer) {
   server.registerTool(

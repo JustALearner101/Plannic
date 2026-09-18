@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { InitPlanInputSchema } from "@plannic/core";
-import { initPlan } from "@plannic/fs";
+import { initPlan } from "@plannic/headless";
 
 export function registerInitPlan(server: McpServer) {
   server.registerTool(

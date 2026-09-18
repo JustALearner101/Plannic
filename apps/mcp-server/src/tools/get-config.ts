@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { GetConfigInputSchema } from "@plannic/core";
-import { readConfig } from "@plannic/fs";
+import { readConfig } from "@plannic/headless";
 
 export function registerGetConfig(server: McpServer) {
   server.registerTool(

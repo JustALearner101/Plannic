@@ -21,6 +21,7 @@
         "@opentui/solid": "^0.5.11",
         "@plannic/core": "workspace:*",
         "@plannic/fs": "workspace:*",
+        "@plannic/headless": "workspace:*",
         "solid-js": "^1.9.15",
       },
       "devDependencies": {
@@ -37,6 +38,7 @@
         "@codemirror/theme-one-dark": "^6.1.2",
         "@plannic/core": "workspace:*",
         "@plannic/fs": "workspace:*",
+        "@plannic/headless": "workspace:*",
         "@tauri-apps/api": "^2.2.0",
         "@tauri-apps/plugin-dialog": "^2.7.3",
         "@tauri-apps/plugin-fs": "^2.5.2",
@@ -63,6 +65,19 @@
         "vite": "^6.0.0",
       },
     },
+    "apps/headless": {
+      "name": "@plannic/headless-app",
+      "bin": {
+        "plannic-headless": "./src/index.ts",
+      },
+      "dependencies": {
+        "@plannic/headless": "workspace:*",
+      },
+      "devDependencies": {
+        "@types/node": "^22.0.0",
+        "typescript": "^5.7.0",
+      },
+    },
     "apps/mcp-server": {
       "name": "@plannic/mcp-server",
       "version": "0.1.0",
@@ -70,6 +85,7 @@
         "@modelcontextprotocol/sdk": "^1.30.0",
         "@plannic/core": "workspace:*",
         "@plannic/fs": "workspace:*",
+        "@plannic/headless": "workspace:*",
         "zod": "^3.25.0",
       },
       "devDependencies": {
@@ -94,6 +110,18 @@
         "@plannic/core": "workspace:*",
         "fuse.js": "^7.0.0",
         "gray-matter": "^4.0.3",
+      },
+      "devDependencies": {
+        "@types/node": "^22.0.0",
+        "typescript": "^5.7.0",
+      },
+    },
+    "packages/headless": {
+      "name": "@plannic/headless",
+      "version": "0.1.0",
+      "dependencies": {
+        "@plannic/core": "workspace:*",
+        "@plannic/fs": "workspace:*",
       },
       "devDependencies": {
         "@types/node": "^22.0.0",
@@ -379,6 +407,10 @@
     "@plannic/desktop": ["@plannic/desktop@workspace:apps/desktop"],
 
     "@plannic/fs": ["@plannic/fs@workspace:packages/fs"],
+
+    "@plannic/headless": ["@plannic/headless@workspace:packages/headless"],
+
+    "@plannic/headless-app": ["@plannic/headless-app@workspace:apps/headless"],
 
     "@plannic/mcp-server": ["@plannic/mcp-server@workspace:apps/mcp-server"],
 

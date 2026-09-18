@@ -1,0 +1,1 @@
+{"taskId":"cross-module-search","condition":"baseline","plan":"Modify search implementation and MCP handler to support status.","patch":""}

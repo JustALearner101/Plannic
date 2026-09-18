@@ -20,51 +20,50 @@ export async function searchPlans(
   const summaries = await listPlans(cwd);
   const items: SearchableItem[] = [];
 
-  for (const summary of summaries) {
+  const planItems = await Promise.all(summaries.map(async (summary) => {
     const plan = await readPlan(cwd, summary.slug);
-    if (!plan) continue;
-
-    for (const doc of plan.documents) {
-      items.push({
-        slug: plan.slug,
-        planName: summary.name,
-        docType: doc.type,
-        documentFile: path.basename(doc.path),
-        body: doc.body,
-        tags: doc.frontmatter.tags ?? [],
-      });
-    }
-  }
-
+    if (!plan) return [] as SearchableItem[];
+    return plan.documents.map((doc) => ({
+      slug: plan.slug,
+      planName: summary.name,
+      docType: doc.type,
+      documentFile: path.basename(doc.path),
+      body: doc.body,
+      tags: doc.frontmatter.tags ?? [],
+    }));
+  }));
+  items.push(...planItems.flat());
   // Index ADRs
   const adrSummaries = await listAdrs(cwd);
-  for (const adrSummary of adrSummaries) {
+  const adrItems = await Promise.all(adrSummaries.map(async (adrSummary) => {
     const adr = await readAdr(cwd, adrSummary.number);
-    if (!adr) continue;
-    items.push({
+    if (!adr) return null;
+    return {
       slug: adr.slug,
       planName: `ADR ${adr.number}: ${adr.frontmatter.title}`,
       docType: "adr",
       documentFile: path.basename(adr.path),
       body: adr.body,
       tags: adr.frontmatter.tags ?? [],
-    });
-  }
+    };
+  }));
+  items.push(...adrItems.filter((item): item is SearchableItem => item !== null));
 
   // Index Specs
   const specSummaries = await listSpecs(cwd);
-  for (const specSummary of specSummaries) {
+  const specItems = await Promise.all(specSummaries.map(async (specSummary) => {
     const spec = await readSpec(cwd, specSummary.slug);
-    if (!spec) continue;
-    items.push({
+    if (!spec) return null;
+    return {
       slug: spec.slug,
       planName: `Spec: ${spec.frontmatter.title}`,
       docType: "spec",
       documentFile: path.basename(spec.path),
       body: spec.body,
       tags: spec.frontmatter.tags ?? [],
-    });
-  }
+    };
+  }));
+  items.push(...specItems.filter((item): item is SearchableItem => item !== null));
 
   if (items.length === 0) {
     return [];
@@ -78,6 +77,8 @@ export async function searchPlans(
       { name: "body", weight: 0.2 },
     ],
     threshold: 0.4,
+    ignoreLocation: true,
+    minMatchCharLength: 2,
     includeScore: true,
   });
 

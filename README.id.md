@@ -19,7 +19,7 @@
   <a href="https://svelte.dev/"><img src="https://img.shields.io/badge/Frontend-Svelte%205-FF3E00?logo=svelte" alt="Svelte 5" /></a>
   <a href="https://github.com/anomalyco/opentui"><img src="https://img.shields.io/badge/CLI-OpenTUI-00DC82" alt="OpenTUI" /></a>
   <a href="https://modelcontextprotocol.io/"><img src="https://img.shields.io/badge/Protocol-Model%20Context%20Protocol-4A154B" alt="MCP" /></a>
-  <img src="https://img.shields.io/badge/E2E%20Tests-7%2F7%20Passed-34D399" alt="Tests 7/7 Passed" />
+  <img src="https://img.shields.io/badge/E2E%20Tests-CI%20Gated-38BDF8" alt="E2E tests CI gated" />
   <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License MIT" /></a>
 </p>
 
@@ -272,7 +272,66 @@ bun run test:all
 bun run test:e2e
 ```
 
+## 📊 Benchmark Planning: Plan Lebih Baik, Lebih Sedikit Tebak-tebakan
+
+Plannic dibuat untuk mengatasi kelemahan umum planning bawaan AI agent: plan terdengar masuk akal, tetapi sering melewatkan boundary repository, dependency, dan keputusan arsitektur.
+
+Benchmark paired pertama membandingkan lima task yang sama dengan dan tanpa structured planning tools dari Plannic:
+
+```mermaid
+xychart-beta
+    title "Perbandingan Skor Plan: Baseline vs Plannic (0–4)"
+    x-axis [Config, Search, History, Refactor, Governance]
+    y-axis "Skor" 0 --> 4
+    line [1, 0, 0, 0, 0]
+    line [1, 2, 2, 1, 2]
+```
+
+`Garis 1 = plan baseline` · `Garis 2 = plan dengan Plannic`
+
+| Task | Baseline | Plannic |
+|---|---:|---:|
+| Validasi config | 1/4 | 1/4 |
+| Search lintas module | 0/4 | 2/4 |
+| API history | 0/4 | 2/4 |
+| Refactor task parser | 0/4 | 1/4 |
+| Governance plan | 0/4 | 2/4 |
+
+| Agregat | Baseline | Plannic | Perubahan |
+|---|---:|---:|---:|
+| Rata-rata skor plan | 0.2/4 | 1.6/4 | **+1.4** |
+
+**Sinyal:** peningkatan terkuat Plannic terlihat pada task lintas module dan berat di arsitektur—tepat pada kasus ketika agent membutuhkan context, keputusan, dan boundary eksekusi yang eksplisit.
+
+Sinyal awalnya: Plannic menghasilkan plan yang lebih kuat pada 3 dari 5 task berorientasi arsitektur, serta menyamai atau memperbaiki 2 task lainnya. Ini masih hasil awal validasi harness—belum klaim peningkatan implementasi. Tahap berikutnya memakai paired implementation patch nyata untuk mengukur test success, scope drift, dan effort koreksi.
+
+Jalankan secara lokal dengan `bun run benchmark:planning`. Metodologi dan hasil lengkap tersedia di [`benchmarks/planning/VALID-RUN-RESULTS.md`](./benchmarks/planning/VALID-RUN-RESULTS.md).
+
 ---
+
+### Instalasi mode headless
+
+Untuk AI agent, CI, dan automation tanpa UI. Installer mendukung Linux/macOS x64 dan ARM64, serta Windows x64. Semua artifact diverifikasi dengan SHA-256.
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/JustALearner101/Plannic/main/scripts/install-headless.sh | sh
+```
+
+Untuk Windows PowerShell:
+
+```powershell
+irm https://raw.githubusercontent.com/JustALearner101/Plannic/main/scripts/install-headless.ps1 | iex
+```
+
+Gunakan `PLANNIC_REPO` atau `PLANNIC_INSTALL_DIR` untuk mengubah default.
+
+Setelah instalasi, buka terminal baru dan verifikasi dengan:
+
+```text
+plannic --help
+```
+
+Command `plannic` dan `plannic-headless` tersedia; di Windows installer otomatis menambahkan folder instalasi ke User `PATH`.
 
 ## 📄 Lisensi
 MIT © [JustALearner101 / Atar](https://github.com/JustALearner101/Plannic)

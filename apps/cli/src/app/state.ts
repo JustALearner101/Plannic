@@ -1,6 +1,6 @@
 import { createSignal, createMemo } from "solid-js";
 import type { Plan, PlanSummary, PlanDocument } from "@plannic/core";
-import { listPlans, readPlan } from "@plannic/fs";
+import { listPlans, readPlan } from "@plannic/headless";
 import { findCommand, filterCommands, type SlashCommand } from "../commands/registry.js";
 import { computeAutocomplete, type AutocompleteItem, type AutocompleteResult } from "./autocomplete.js";
 

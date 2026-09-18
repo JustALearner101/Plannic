@@ -52,3 +52,27 @@ jobs:
 
       - name: Cargo check
         run: cargo check --manifest-path apps/desktop/src-tauri/Cargo.toml
+
+  headless-build:
+    name: Headless build (${{ matrix.target }})
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            target: linux-x64
+          - runner: ubuntu-24.04-arm
+            target: linux-arm64
+          - runner: macos-13
+            target: darwin-x64
+          - runner: macos-14
+            target: darwin-arm64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - run: bun build apps/headless/src/index.ts --compile --outfile dist/plannic-headless
+      - run: test -x dist/plannic-headless
+        if: runner.os != 'Windows'

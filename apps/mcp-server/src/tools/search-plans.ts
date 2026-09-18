@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { SearchPlansInputSchema } from "@plannic/core";
-import { searchPlans } from "@plannic/fs";
+import { searchPlans } from "@plannic/headless";
 
 export function registerSearchPlans(server: McpServer) {
   server.registerTool(

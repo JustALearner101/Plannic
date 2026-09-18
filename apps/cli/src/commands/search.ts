@@ -1,4 +1,4 @@
-import { searchPlans } from "@plannic/fs";
+import { searchPlans } from "@plannic/headless";
 
 export async function searchCommand(cwd: string, args: string[]) {
   const queryArgs = args.filter((a) => !a.startsWith("--"));

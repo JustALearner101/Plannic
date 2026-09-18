@@ -48,8 +48,10 @@ const SUITES: Suite[] = [
   {
     id: "desktop-visual-workbench",
     name: "Desktop Visual Workbench & Native Smoke Suite (Playwright)",
-    command: "bunx",
-    args: ["playwright", "test", "--config", "e2e/playwright.config.ts"],
+    command: process.env.PLANNIC_NODE ?? (process.platform === "win32" ? "npx.cmd" : "npx"),
+    args: process.env.PLANNIC_NODE
+      ? ["node_modules/@playwright/test/cli.js", "test", "--config", "e2e/playwright.config.ts"]
+      : ["--no-install", "playwright", "test", "--config", "e2e/playwright.config.ts"],
   },
 ];
 

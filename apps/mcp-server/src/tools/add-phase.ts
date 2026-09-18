@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { AddPhaseInputSchema } from "@plannic/core";
-import { addPhase } from "@plannic/fs";
+import { addPhase } from "@plannic/headless";
 
 export function registerAddPhase(server: McpServer) {
   server.registerTool(

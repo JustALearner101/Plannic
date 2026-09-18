@@ -1,4 +1,4 @@
-import { initPlan } from "@plannic/fs";
+import { initPlan } from "@plannic/headless";
 import type { PlanMode } from "@plannic/core";
 
 export async function createCommand(cwd: string, args: string[]) {

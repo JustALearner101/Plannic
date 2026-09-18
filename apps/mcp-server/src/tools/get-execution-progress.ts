@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { GetExecutionProgressInputSchema } from "@plannic/core";
-import { getExecutionProgress } from "@plannic/fs";
+import { getExecutionProgress } from "@plannic/headless";
 
 export function registerGetExecutionProgress(server: McpServer) {
   server.registerTool(

@@ -10,6 +10,7 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
     "@plannic/core": "workspace:*",
+    "@plannic/headless": "workspace:*",
     "@plannic/fs": "workspace:*",
     "zod": "^3.25.0"
   },

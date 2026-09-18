@@ -1,5 +1,5 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { listPlans, listAdrs, listSpecs } from "@plannic/fs";
+import { listPlans, listAdrs, listSpecs } from "@plannic/headless";
 
 export function registerResources(server: McpServer) {
   // 1. plannic://plans

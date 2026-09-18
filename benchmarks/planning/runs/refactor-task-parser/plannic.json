@@ -1,0 +1,1 @@
+{"taskId":"refactor-task-parser","condition":"plannic","plan":"Trace move_task and related operations, centralize markdown status parsing in packages/fs, preserve all statuses, and run the full test suite.","patch":""}

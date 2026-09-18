@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { UpdateSpecInputSchema } from "@plannic/core";
-import { updateSpec } from "@plannic/fs";
+import { updateSpec } from "@plannic/headless";
 
 export function registerUpdateSpec(server: McpServer) {
   server.registerTool(

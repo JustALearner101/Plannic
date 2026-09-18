@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { AdvancePhaseInputSchema } from "@plannic/core";
-import { advancePhase } from "@plannic/fs";
+import { advancePhase } from "@plannic/headless";
 
 export function registerAdvancePhase(server: McpServer) {
   server.registerTool(

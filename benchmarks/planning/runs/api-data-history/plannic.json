@@ -1,0 +1,1 @@
+{"taskId":"api-data-history","condition":"plannic","plan":"Keep JSONL append-only; add summary counts in packages/fs and expose a stable MCP response in apps/mcp-server.","patch":""}

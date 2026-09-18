@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { InitAdrInputSchema } from "@plannic/core";
-import { initAdr } from "@plannic/fs";
+import { initAdr } from "@plannic/headless";
 
 export function registerInitAdr(server: McpServer) {
   server.registerTool(

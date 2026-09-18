@@ -132,8 +132,7 @@ export async function listPlans(cwd: string): Promise<PlanSummary[]> {
   const plansDir = getPlansDir(cwd);
   try {
     const planDirs = await fs.readdir(plansDir, { withFileTypes: true });
-    for (const dirent of planDirs) {
-      if (!dirent.isDirectory()) continue;
+    await Promise.all(planDirs.filter((dirent) => dirent.isDirectory()).map(async (dirent) => {
       const slug = dirent.name;
       const planRootPath = path.join(plansDir, slug, "plan.md");
       const doc = await readDocumentFile(planRootPath);
@@ -161,7 +160,7 @@ export async function listPlans(cwd: string): Promise<PlanSummary[]> {
           format: "hierarchical",
         });
       }
-    }
+    }));
   } catch {
     // If .docs/plans does not exist, continue to legacy scan
   }

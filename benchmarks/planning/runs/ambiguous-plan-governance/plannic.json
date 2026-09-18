@@ -1,0 +1,1 @@
+{"taskId":"ambiguous-plan-governance","condition":"plannic","plan":"Record an ADR for optional governance metadata; update packages/core and packages/fs, preserve legacy plans, validate owner and review cadence, and avoid database changes.","patch":""}

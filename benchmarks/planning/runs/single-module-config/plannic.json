@@ -1,0 +1,1 @@
+{"taskId":"single-module-config","condition":"plannic","plan":"Update packages/fs config parser; preserve existing format; add validation for language and regression tests.","patch":""}

@@ -1,0 +1,1 @@
+{"taskId":"cross-module-search","condition":"plannic","plan":"Update packages/fs search with status filtering, then update apps/mcp-server schema and preserve default behavior with tests.","patch":""}

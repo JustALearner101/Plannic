@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { MoveTaskInputSchema } from "@plannic/core";
-import { moveTask } from "@plannic/fs";
+import { moveTask } from "@plannic/headless";
 
 export function registerMoveTask(server: McpServer) {
   server.registerTool(

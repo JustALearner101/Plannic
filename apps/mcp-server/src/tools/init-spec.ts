@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { InitSpecInputSchema } from "@plannic/core";
-import { initSpec } from "@plannic/fs";
+import { initSpec } from "@plannic/headless";
 
 export function registerInitSpec(server: McpServer) {
   server.registerTool(

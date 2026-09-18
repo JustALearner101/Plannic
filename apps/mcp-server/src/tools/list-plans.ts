@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { ListPlansInputSchema } from "@plannic/core";
-import { listPlans } from "@plannic/fs";
+import { listPlans } from "@plannic/headless";
 
 export function registerListPlans(server: McpServer) {
   server.registerTool(

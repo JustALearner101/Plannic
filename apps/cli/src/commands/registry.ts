@@ -11,7 +11,7 @@ import {
   listSpecs,
   readSpec,
   formatAdrNumber,
-} from "@plannic/fs";
+} from "@plannic/headless";
 
 export interface CommandContext {
   state: CliState;

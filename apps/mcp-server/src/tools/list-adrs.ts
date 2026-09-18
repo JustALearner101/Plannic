@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { ListAdrsInputSchema } from "@plannic/core";
-import { listAdrs, formatAdrNumber } from "@plannic/fs";
+import { listAdrs, formatAdrNumber } from "@plannic/headless";
 
 export function registerListAdrs(server: McpServer) {
   server.registerTool(

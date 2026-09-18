@@ -38,6 +38,9 @@ Thumbs.db
 !.env.example
 
 # Temporary files
+.tmp/
+.openclaude/
+benchmarks/planning/results/
 *.log
 npm-debug.log*
 yarn-debug.log*
