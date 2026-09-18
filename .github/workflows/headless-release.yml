@@ -13,7 +13,7 @@ jobs:
             asset: plannic-headless-linux-x64.tar.gz
           - runner: ubuntu-24.04-arm
             asset: plannic-headless-linux-arm64.tar.gz
-          - runner: macos-13
+          - runner: macos-15-intel
             asset: plannic-headless-darwin-x64.tar.gz
           - runner: macos-14
             asset: plannic-headless-darwin-arm64.tar.gz
