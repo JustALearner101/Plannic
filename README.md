@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/JustALearner101/Plannic/releases"><img src="https://img.shields.io/badge/Release-v0.2.0-38BDF8?logo=github" alt="Release v0.2.0" /></a>
+  <a href="https://github.com/JustALearner101/Plannic/releases"><img src="https://img.shields.io/badge/Release-v0.3.0-38BDF8?logo=github" alt="Release v0.3.0" /></a>
   <a href="https://bun.sh/"><img src="https://img.shields.io/badge/Runtime-Bun-black?logo=bun" alt="Bun" /></a>
   <a href="https://tauri.app/"><img src="https://img.shields.io/badge/Desktop-Tauri%202-24C8D8?logo=tauri" alt="Tauri 2" /></a>
   <a href="https://svelte.dev/"><img src="https://img.shields.io/badge/Frontend-Svelte%205-FF3E00?logo=svelte" alt="Svelte 5" /></a>
@@ -30,7 +30,7 @@
   ██╔═══╝ ██║     ██╔══██║██║╚██╗██║██║╚██╗██║██║██║     
   ██║     ███████╗██║  ██║██║ ╚████║██║ ╚████║██║╚██████╗
   ╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═══╝╚═╝ ╚═════╝
-  PLANNIC / Architecture, Living Specs & Planning Workbench v0.2.0
+  PLANNIC / Architecture, Living Specs & Planning Workbench v0.3.0
 ```
 
 ---
@@ -40,6 +40,32 @@ Plannic is a **local-first engineering workbench** that bridges human software e
 Crafted around the **Monochrome Workshop** design philosophy: zero bloat, high performance, strict dark workshop palette (`#0F1117`), razor-sharp 1px borders, and zero cloud or SaaS database dependencies.
 
 > 🤖 **Working with an AI Coding Assistant?** See [AGENT_GUIDE.md](./AGENT_GUIDE.md) for the complete zero-shot onboarding runbook, MCP tool reference, testing guidelines, and auto-updater workflow.
+
+---
+
+## 🚀 Install
+
+### Headless / AI Agent
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/JustALearner101/Plannic/main/scripts/install-headless.sh | sh
+```
+
+On Windows PowerShell:
+
+```powershell
+irm https://raw.githubusercontent.com/JustALearner101/Plannic/main/scripts/install-headless.ps1 | iex
+```
+
+### From Source
+
+```bash
+git clone https://github.com/JustALearner101/Plannic.git
+cd Plannic
+bun install
+```
+
+See [Quick Start](#-quick-start) for CLI, desktop, and MCP development commands.
 
 ---
 
@@ -236,14 +262,14 @@ Plannic follows strict **Semantic Versioning** (`vMAJOR.MINOR.PATCH`).
 
 ### 1. Bumping Version (Single Command)
 ```bash
-# Patch (0.2.0 -> 0.2.1)
+# Patch (0.3.0 -> 0.3.1)
 bun run bump patch
 
-# Minor (0.2.0 -> 0.3.0)
+# Minor (0.3.0 -> 0.4.0)
 bun run bump minor
 
 # Specific version
-bun run bump 0.2.5
+bun run bump 0.3.5
 ```
 *(Automatically synchronizes `tauri.conf.json`, `Cargo.toml`, and all `package.json` manifests).*
 

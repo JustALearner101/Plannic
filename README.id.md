@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/JustALearner101/Plannic/releases"><img src="https://img.shields.io/badge/Release-v0.2.0-38BDF8?logo=github" alt="Release v0.2.0" /></a>
+  <a href="https://github.com/JustALearner101/Plannic/releases"><img src="https://img.shields.io/badge/Release-v0.3.0-38BDF8?logo=github" alt="Release v0.3.0" /></a>
   <a href="https://bun.sh/"><img src="https://img.shields.io/badge/Runtime-Bun-black?logo=bun" alt="Bun" /></a>
   <a href="https://tauri.app/"><img src="https://img.shields.io/badge/Desktop-Tauri%202-24C8D8?logo=tauri" alt="Tauri 2" /></a>
   <a href="https://svelte.dev/"><img src="https://img.shields.io/badge/Frontend-Svelte%205-FF3E00?logo=svelte" alt="Svelte 5" /></a>
@@ -30,7 +30,7 @@
   ██╔═══╝ ██║     ██╔══██║██║╚██╗██║██║╚██╗██║██║██║     
   ██║     ███████╗██║  ██║██║ ╚████║██║ ╚████║██║╚██████╗
   ╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═══╝╚═╝ ╚═════╝
-  PLANNIC / Architecture, Living Specs & Planning Workbench v0.2.0
+  PLANNIC / Architecture, Living Specs & Planning Workbench v0.3.0
 ```
 
 ---
@@ -40,6 +40,32 @@ Plannic adalah **local-first engineering workbench** yang menjembatani developer
 Didesain dengan filosofi **Monochrome Workshop**: bersih, performan tinggi, palet warna workshop gelap (`#0F1117`), border 1px presisi, dan nol ketergantungan cloud database.
 
 > 🤖 **Bekerja dengan AI Coding Assistant?** Lihat [AGENT_GUIDE.md](./AGENT_GUIDE.md) untuk panduan runbook onboarding instan, referensi MCP tools, pedoman pengujian, dan workflow rilis otomatis.
+
+---
+
+## 🚀 Instalasi
+
+### Headless / AI Agent
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/JustALearner101/Plannic/main/scripts/install-headless.sh | sh
+```
+
+Di Windows PowerShell:
+
+```powershell
+irm https://raw.githubusercontent.com/JustALearner101/Plannic/main/scripts/install-headless.ps1 | iex
+```
+
+### Dari Source
+
+```bash
+git clone https://github.com/JustALearner101/Plannic.git
+cd Plannic
+bun install
+```
+
+Lihat [Panduan Memulai](#-panduan-memulai) untuk perintah development CLI, desktop, dan MCP.
 
 ---
 
@@ -236,14 +262,14 @@ Plannic mengikuti aturan **Semantic Versioning** (`vMAJOR.MINOR.PATCH`).
 
 ### 1. Bumping Versi (Satu Perintah)
 ```bash
-# Patch (0.2.0 -> 0.2.1)
+# Patch (0.3.0 -> 0.3.1)
 bun run bump patch
 
-# Minor (0.2.0 -> 0.3.0)
+# Minor (0.3.0 -> 0.4.0)
 bun run bump minor
 
 # Versi spesifik
-bun run bump 0.2.5
+bun run bump 0.3.5
 ```
 *(Otomatis mensinkronkan `tauri.conf.json`, `Cargo.toml`, dan semua manifest `package.json`).*
 
