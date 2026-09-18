@@ -3,6 +3,12 @@ name: Headless Release Assets
 on:
   release:
     types: [published]
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Release tag to receive the headless assets
+        required: true
+        default: v0.3.0
 
 jobs:
   headless:
@@ -34,6 +40,7 @@ jobs:
         if: startsWith(matrix.runner, 'ubuntu-')
       - uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ inputs.release_tag || github.ref_name }}
           files: |
             ${{ matrix.asset }}
             ${{ matrix.asset }}.sha256
@@ -54,6 +61,7 @@ jobs:
       - run: (Get-FileHash plannic-headless-windows-x64.zip -Algorithm SHA256).Hash.ToLower() + '  plannic-headless-windows-x64.zip' | Set-Content plannic-headless-windows-x64.zip.sha256
       - uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ inputs.release_tag || github.ref_name }}
           files: |
             plannic-headless-windows-x64.zip
             plannic-headless-windows-x64.zip.sha256
