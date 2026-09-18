@@ -73,6 +73,6 @@ jobs:
         with:
           bun-version: latest
       - run: bun install --frozen-lockfile
-      - run: bun build apps/headless/src/index.ts --compile --outfile dist/plannic-headless
-      - run: test -x dist/plannic-headless
+      - run: bun run build:plannic
+      - run: test -x dist/plannic.exe
         if: runner.os != 'Windows'

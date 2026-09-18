@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/JustALearner101/Plannic/releases"><img src="https://img.shields.io/badge/Release-v0.3.0-38BDF8?logo=github" alt="Release v0.3.0" /></a>
+  <a href="https://github.com/JustALearner101/Plannic/releases"><img src="https://img.shields.io/badge/Release-v0.3.1-38BDF8?logo=github" alt="Release v0.3.1" /></a>
   <a href="https://bun.sh/"><img src="https://img.shields.io/badge/Runtime-Bun-black?logo=bun" alt="Bun" /></a>
   <a href="https://tauri.app/"><img src="https://img.shields.io/badge/Desktop-Tauri%202-24C8D8?logo=tauri" alt="Tauri 2" /></a>
   <a href="https://svelte.dev/"><img src="https://img.shields.io/badge/Frontend-Svelte%205-FF3E00?logo=svelte" alt="Svelte 5" /></a>
@@ -30,7 +30,7 @@
   ██╔═══╝ ██║     ██╔══██║██║╚██╗██║██║╚██╗██║██║██║     
   ██║     ███████╗██║  ██║██║ ╚████║██║ ╚████║██║╚██████╗
   ╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═══╝╚═╝ ╚═════╝
-  PLANNIC / Architecture, Living Specs & Planning Workbench v0.3.0
+  PLANNIC / Architecture, Living Specs & Planning Workbench v0.3.1
 ```
 
 ---
@@ -45,16 +45,16 @@ Crafted around the **Monochrome Workshop** design philosophy: zero bloat, high p
 
 ## 🚀 Install
 
-### Headless / AI Agent
+### Golden Path / AI Agent (Windows)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/JustALearner101/Plannic/main/scripts/install-headless.sh | sh
+irm https://raw.githubusercontent.com/JustALearner101/Plannic/main/scripts/install.ps1 | iex
 ```
 
 On Windows PowerShell:
 
 ```powershell
-irm https://raw.githubusercontent.com/JustALearner101/Plannic/main/scripts/install-headless.ps1 | iex
+plannic init
 ```
 
 ### From Source
@@ -243,12 +243,13 @@ Add Plannic to your AI coding assistant configuration (`.mcp.json` in Antigravit
 }
 ```
 
-*Or using the standalone precompiled binary (`release/plannic-mcp.exe`):*
+*The unified binary also provides the MCP server through `plannic mcp`:*
 ```json
 {
   "mcpServers": {
     "plannic": {
-      "command": "D:/Project/Plannic/release/plannic-mcp.exe"
+      "command": "plannic",
+      "args": ["mcp"]
     }
   }
 }
@@ -335,18 +336,18 @@ Run it locally with `bun run benchmark:planning`. Full notes and raw methodology
 
 ---
 
-### Install headless mode
+### Install the unified CLI
 
-For AI agents, CI, and automation without a UI. The installer supports Linux/macOS x64 and ARM64, plus Windows x64. Every artifact is verified with SHA-256.
+For AI agents, CI, and automation without a UI. The Windows installer installs the CLI, headless engine, and MCP server together. The release archive is verified with SHA-256.
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/JustALearner101/Plannic/main/scripts/install-headless.sh | sh
+irm https://raw.githubusercontent.com/JustALearner101/Plannic/main/scripts/install.ps1 | iex
 ```
 
 On Windows PowerShell:
 
 ```powershell
-irm https://raw.githubusercontent.com/JustALearner101/Plannic/main/scripts/install-headless.ps1 | iex
+plannic init
 ```
 
 Set `PLANNIC_REPO` or `PLANNIC_INSTALL_DIR` to override the defaults.
@@ -357,7 +358,7 @@ After installation, open a new terminal and verify it with:
 plannic --help
 ```
 
-`plannic` and `plannic-headless` are both available; on Windows the installer adds the install directory to your User `PATH` automatically.
+`plannic` provides TUI, JSON headless operations, and MCP; the installer adds it to your User `PATH` automatically.
 
 ## 📄 License
 MIT © [JustALearner101 / Atar](https://github.com/JustALearner101/Plannic)

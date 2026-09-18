@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/JustALearner101/Plannic/releases"><img src="https://img.shields.io/badge/Release-v0.3.0-38BDF8?logo=github" alt="Release v0.3.0" /></a>
+  <a href="https://github.com/JustALearner101/Plannic/releases"><img src="https://img.shields.io/badge/Release-v0.3.1-38BDF8?logo=github" alt="Release v0.3.1" /></a>
   <a href="https://bun.sh/"><img src="https://img.shields.io/badge/Runtime-Bun-black?logo=bun" alt="Bun" /></a>
   <a href="https://tauri.app/"><img src="https://img.shields.io/badge/Desktop-Tauri%202-24C8D8?logo=tauri" alt="Tauri 2" /></a>
   <a href="https://svelte.dev/"><img src="https://img.shields.io/badge/Frontend-Svelte%205-FF3E00?logo=svelte" alt="Svelte 5" /></a>
@@ -30,7 +30,7 @@
   ██╔═══╝ ██║     ██╔══██║██║╚██╗██║██║╚██╗██║██║██║     
   ██║     ███████╗██║  ██║██║ ╚████║██║ ╚████║██║╚██████╗
   ╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═══╝╚═╝ ╚═════╝
-  PLANNIC / Architecture, Living Specs & Planning Workbench v0.3.0
+  PLANNIC / Architecture, Living Specs & Planning Workbench v0.3.1
 ```
 
 ---
@@ -48,13 +48,13 @@ Didesain dengan filosofi **Monochrome Workshop**: bersih, performan tinggi, pale
 ### Headless / AI Agent
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/JustALearner101/Plannic/main/scripts/install-headless.sh | sh
+irm https://raw.githubusercontent.com/JustALearner101/Plannic/main/scripts/install.ps1 | iex
 ```
 
 Di Windows PowerShell:
 
 ```powershell
-irm https://raw.githubusercontent.com/JustALearner101/Plannic/main/scripts/install-headless.ps1 | iex
+plannic init
 ```
 
 ### Dari Source
@@ -243,12 +243,13 @@ Tambahkan konfigurasi berikut ke AI editor Anda (`.mcp.json` di Antigravity, Cla
 }
 ```
 
-*Atau menggunakan binary mandiri precompiled (`release/plannic-mcp.exe`):*
+*Binary unified juga menyediakan MCP melalui `plannic mcp`:*
 ```json
 {
   "mcpServers": {
     "plannic": {
-      "command": "D:/Project/Plannic/release/plannic-mcp.exe"
+      "command": "plannic",
+      "args": ["mcp"]
     }
   }
 }
@@ -340,13 +341,13 @@ Jalankan secara lokal dengan `bun run benchmark:planning`. Metodologi dan hasil 
 Untuk AI agent, CI, dan automation tanpa UI. Installer mendukung Linux/macOS x64 dan ARM64, serta Windows x64. Semua artifact diverifikasi dengan SHA-256.
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/JustALearner101/Plannic/main/scripts/install-headless.sh | sh
+irm https://raw.githubusercontent.com/JustALearner101/Plannic/main/scripts/install.ps1 | iex
 ```
 
 Untuk Windows PowerShell:
 
 ```powershell
-irm https://raw.githubusercontent.com/JustALearner101/Plannic/main/scripts/install-headless.ps1 | iex
+plannic init
 ```
 
 Gunakan `PLANNIC_REPO` atau `PLANNIC_INSTALL_DIR` untuk mengubah default.
@@ -357,7 +358,7 @@ Setelah instalasi, buka terminal baru dan verifikasi dengan:
 plannic --help
 ```
 
-Command `plannic` dan `plannic-headless` tersedia; di Windows installer otomatis menambahkan folder instalasi ke User `PATH`.
+Command `plannic` menyediakan TUI, operasi JSON headless, dan MCP; installer otomatis menambahkan folder instalasi ke User `PATH`.
 
 ## 📄 Lisensi
 MIT © [JustALearner101 / Atar](https://github.com/JustALearner101/Plannic)

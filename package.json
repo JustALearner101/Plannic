@@ -18,12 +18,14 @@
     "test:e2e": "bun run e2e/runner.ts",
     "benchmark:planning": "bun run benchmarks/planning/runner.ts",
     "headless": "bun run packages/headless/src/index.ts",
-    "build:headless": "bun build apps/headless/src/index.ts --compile --outfile dist/plannic-headless",
+    "build:headless": "bun run build:plannic",
+    "build:plannic": "bun run generate:agent-assets && bun build apps/cli/src/index.tsx --compile --outfile dist/plannic.exe",
+    "generate:agent-assets": "bun run scripts/generate-agent-assets.ts",
     "migrate-docs": "bun run packages/fs/scripts/migrate-docs.ts",
     "bump": "bun run scripts/bump-version.ts"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0"
   },
-  "version": "0.3.0"
+  "version": "0.3.1"
 }

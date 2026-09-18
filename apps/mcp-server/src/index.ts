@@ -25,7 +25,7 @@ import { registerPrompts } from "./prompts.js";
 
 const server = new McpServer({
   name: "plannic",
-  version: "0.3.0",
+  version: "0.3.1",
 });
 
 // Register all 19 MCP tools
@@ -53,7 +53,7 @@ registerGetExecutionProgress(server);
 registerResources(server);
 registerPrompts(server);
 
-async function main() {
+export async function startMcpServer() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
   console.error("Plannic MCP Server started on stdio (19 tools, 3 resources, 2 prompts registered)");
@@ -71,7 +71,7 @@ process.on("SIGTERM", async () => {
   process.exit(0);
 });
 
-main().catch((error) => {
+if (import.meta.main) startMcpServer().catch((error) => {
   console.error("Fatal error starting Plannic MCP server:", error);
   process.exit(1);
 });

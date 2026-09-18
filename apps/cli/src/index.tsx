@@ -5,6 +5,8 @@ import { createCommand } from "./commands/create.js";
 import { openCommand } from "./commands/open.js";
 import { startTui } from "./app/App.js";
 import { printAsciiBanner } from "./banner.js";
+import { createHeadless } from "@plannic/headless";
+import { initWorkspace } from "./init.js";
 
 function printHelp() {
   printAsciiBanner();
@@ -46,7 +48,28 @@ async function main() {
   const firstArg = rawArgs[0].toLowerCase();
   const subArgs = rawArgs.slice(1);
 
+  if (firstArg === "--json") {
+    const operation = subArgs[0] === "list" ? "listPlans" : subArgs[0];
+    const engine = createHeadless({ cwd });
+    const fn = operation && (engine as Record<string, unknown>)[operation];
+    if (typeof fn !== "function") throw new Error(`Unknown headless operation: ${operation ?? "(missing)"}`);
+    console.log(JSON.stringify(await fn(...subArgs.slice(1).map((value) => JSON.parse(value)))));
+    return;
+  }
+
   switch (firstArg) {
+    case "init": {
+      const index = subArgs.indexOf("--agent");
+      const result = await initWorkspace(cwd, (index >= 0 ? subArgs[index + 1] : "all") as any);
+      console.log(JSON.stringify(result, null, 2));
+      if (result.conflicts.length) process.exitCode = 2;
+      break;
+    }
+    case "mcp": {
+      const { startMcpServer } = await import("../../mcp-server/src/index.js");
+      await startMcpServer();
+      break;
+    }
     case "list":
     case "ls":
       await listCommand(cwd, subArgs);
