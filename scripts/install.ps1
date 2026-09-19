@@ -18,8 +18,9 @@ try {
   $targetExe = Join-Path $installDir 'plannic.exe'
   $newExe = Join-Path $temp 'plannic.exe'
   if (Test-Path $targetExe) {
-    $oldExe = Join-Path $installDir 'plannic.exe.old'
-    Remove-Item $oldExe -Force -ErrorAction SilentlyContinue
+    Get-ChildItem -Path $installDir -Filter "plannic.exe.old*" -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue
+    $suffix = Get-Date -Format "yyyyMMddHHmmss"
+    $oldExe = Join-Path $installDir "plannic.exe.old.$suffix"
     Move-Item $targetExe $oldExe -Force -ErrorAction SilentlyContinue
   }
   Copy-Item $newExe $targetExe -Force

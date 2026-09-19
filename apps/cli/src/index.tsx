@@ -57,6 +57,10 @@ async function main() {
   const rawArgs = process.argv.slice(2);
 
   if (rawArgs.length === 0) {
+    if (!process.stdin.isTTY || !process.stdout.isTTY) {
+      printHelp();
+      return;
+    }
     const { startTui } = await import("./app/App.js");
     await startTui(cwd);
     return;
