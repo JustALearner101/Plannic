@@ -6,6 +6,10 @@ const root = process.cwd();
 const canonicalDir = join(root, ".agents", "plugins", "plannic", "skills");
 const deployedDir = join(root, ".agents", "skills");
 
+function normalizeEol(str: string): string {
+  return (str || "").replace(/\r\n/g, "\n").trim();
+}
+
 console.log("Verifying skills synchronization against canonical source...");
 
 const entries = await readdir(canonicalDir, { withFileTypes: true });
@@ -33,13 +37,13 @@ for (const name of skillNames) {
     continue;
   }
 
-  if (canonicalContent !== deployedContent) {
+  if (normalizeEol(canonicalContent) !== normalizeEol(deployedContent)) {
     discrepancies.push(`Content mismatch between ${canonicalFile} and ${deployedFile}`);
   }
 
   // Check generated asset
   const generatedContent = (agentSkills as Record<string, string>)[name];
-  if (generatedContent !== canonicalContent) {
+  if (normalizeEol(generatedContent) !== normalizeEol(canonicalContent)) {
     discrepancies.push(`Generated asset for "${name}" in apps/cli/src/generated/agent-assets.ts is out of sync with canonical source`);
   }
 }

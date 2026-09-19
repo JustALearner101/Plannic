@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile, readdir, copyFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile, readdir } from "node:fs/promises";
 import { join } from "node:path";
 
 const root = process.cwd();
@@ -14,19 +14,20 @@ const sources: Record<string, string> = {};
 
 for (const name of skillNames) {
   const srcFile = join(canonicalDir, name, "SKILL.md");
-  const content = await readFile(srcFile, "utf8");
+  // Always normalize to LF line endings for cross-platform deterministic sync
+  const content = (await readFile(srcFile, "utf8")).replace(/\r\n/g, "\n");
   sources[name] = content;
 
   // Deploy to .agents/skills/<name>/SKILL.md
   const destDir = join(deployedDir, name);
   await mkdir(destDir, { recursive: true });
-  await copyFile(srcFile, join(destDir, "SKILL.md"));
+  await writeFile(join(destDir, "SKILL.md"), content, "utf8");
   console.log(`✔ Synced ${name} -> .agents/skills/${name}/SKILL.md`);
 }
 
 // Read Claude command
 const claudeFile = join(root, ".claude", "commands", "plannic.md");
-const claude = await readFile(claudeFile, "utf8");
+const claude = (await readFile(claudeFile, "utf8")).replace(/\r\n/g, "\n");
 
 // Generate apps/cli/src/generated/agent-assets.ts
 const generatedFile = join(root, "apps", "cli", "src", "generated", "agent-assets.ts");

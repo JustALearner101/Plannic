@@ -1,3 +1,10 @@
+# Line Endings (enforce LF for cross-platform CI determinism)
+* text=auto eol=lf
+*.md text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.json text eol=lf
+
 # GitHub Linguist Overrides
 # Treat MDX and docs as documentation so they don't skew repository language stats
 *.mdx linguist-documentation
