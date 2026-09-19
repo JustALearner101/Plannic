@@ -15,7 +15,14 @@ try {
   $expected = ((Get-Content $checksumFile -Raw) -split '\s+')[0].ToLowerInvariant(); $actual = (Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant()
   if ($expected -ne $actual) { throw "SHA-256 verification failed for $asset." }
   New-Item -ItemType Directory -Force -Path $installDir | Out-Null; Expand-Archive -LiteralPath $archive -DestinationPath $temp -Force
-  Copy-Item (Join-Path $temp 'plannic.exe') (Join-Path $installDir 'plannic.exe') -Force
+  $targetExe = Join-Path $installDir 'plannic.exe'
+  $newExe = Join-Path $temp 'plannic.exe'
+  if (Test-Path $targetExe) {
+    $oldExe = Join-Path $installDir 'plannic.exe.old'
+    Remove-Item $oldExe -Force -ErrorAction SilentlyContinue
+    Move-Item $targetExe $oldExe -Force -ErrorAction SilentlyContinue
+  }
+  Copy-Item $newExe $targetExe -Force
   $userPath = [Environment]::GetEnvironmentVariable('Path', 'User'); $entries = @($userPath -split ';' | Where-Object { $_ })
   if ($entries -notcontains $installDir) { [Environment]::SetEnvironmentVariable('Path', (($entries + $installDir) -join ';'), 'User') }
   Write-Output "✔ Installed plannic to $installDir.`nOpen a new terminal, then run:`n  1. plannic doctor`n  2. plannic init"

@@ -2,8 +2,9 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
 import { createHash } from "node:crypto";
+import { PLANNIC_VERSION } from "@plannic/core";
 
-const CURRENT_VERSION = "0.3.1";
+const CURRENT_VERSION = PLANNIC_VERSION;
 const REPO = process.env.PLANNIC_REPO || "JustALearner101/Plannic";
 
 export interface UpgradeCheckResult {
