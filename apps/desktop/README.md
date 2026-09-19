@@ -1,42 +1,29 @@
-# sv
+# @plannic/desktop
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Local-first desktop application for Plannic, built with **Tauri 2**, **Svelte 5**, and **UnoCSS**.
 
-## Creating a project
+## Features
 
-If you're seeing this, you've probably already done this step. Congrats!
+- **Interactive Kanban Board**: Visual task management with real-time sync across `todo`, `in_progress`, and `done`.
+- **Ghost Cursor & Ambient HUD**: Real-time visual feedback tracking autonomous AI agent activity via `.plannic/.agent_activity.json`.
+- **Milestone Dependency Graph**: Interactive dependency visualization across execution phases.
+- **In-App Auto-Updater**: Instant updates via Tauri 2 updater plugin and Minisign signatures.
 
-```sh
-# create a new project
-npx sv create my-app
+## Development
+
+```bash
+# Run desktop in development mode (with hot module replacement)
+bun run dev:desktop
+
+# Run web view only (browser preview)
+bun run dev:web
+
+# Build production bundle
+bun run build
 ```
 
-To recreate this project with the same configuration:
+## Architecture
 
-```sh
-# recreate this project
-npx sv@0.17.0 create --template minimal --types ts --no-install apps/desktop
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+- **Frontend**: SvelteKit / Svelte 5 (Runes) + UnoCSS (`apps/desktop/src/`)
+- **Backend**: Rust + Tauri 2 (`apps/desktop/src-tauri/`)
+- **IPC Layer**: Custom Tauri commands and events interfacing with `@plannic/fs`

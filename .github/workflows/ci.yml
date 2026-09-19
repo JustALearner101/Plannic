@@ -74,5 +74,4 @@ jobs:
           bun-version: latest
       - run: bun install --frozen-lockfile
       - run: bun run build:plannic
-      - run: test -x dist/plannic.exe
-        if: runner.os != 'Windows'
+      - run: bun run test:smoke

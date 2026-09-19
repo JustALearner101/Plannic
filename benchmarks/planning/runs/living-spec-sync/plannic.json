@@ -1,0 +1,1 @@
+{"taskId":"living-spec-sync","condition":"plannic","plan":"Update packages/fs spec writer and apps/cli doctor options, ensure spec version incremented, status remains living, and doctor options match CLI.","patch":""}

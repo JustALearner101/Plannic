@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { PLANNIC_VERSION } from "@plannic/core";
 import { registerGetConfig } from "./tools/get-config.js";
 import { registerInitPlan } from "./tools/init-plan.js";
 import { registerGetPlan } from "./tools/get-plan.js";
@@ -25,7 +26,7 @@ import { registerPrompts } from "./prompts.js";
 
 const server = new McpServer({
   name: "plannic",
-  version: "0.3.1",
+  version: PLANNIC_VERSION,
 });
 
 // Register all 19 MCP tools
@@ -65,13 +66,10 @@ process.on("SIGINT", async () => {
   process.exit(0);
 });
 
-process.on("SIGTERM", async () => {
-  console.error("Shutting down Plannic MCP server (SIGTERM)...");
-  await server.close();
-  process.exit(0);
-});
-
-if (import.meta.main) startMcpServer().catch((error) => {
-  console.error("Fatal error starting Plannic MCP server:", error);
-  process.exit(1);
-});
+// Start if executed directly
+if (import.meta.main) {
+  startMcpServer().catch((err) => {
+    console.error("Fatal error starting Plannic MCP server:", err);
+    process.exit(1);
+  });
+}

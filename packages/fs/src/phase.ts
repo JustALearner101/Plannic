@@ -141,7 +141,7 @@ export async function addPhase(
     created: now,
     lastUpdated: now,
     tags: [],
-    description: `${phaseTitle} for ${plan.root.frontmatter.name}`,
+    description: `Phase ${nextPhaseNum} milestone deliverables, tasks, and verification checklist for ${plan.root.frontmatter.name}`,
   };
 
   let body = `# ${phaseTitle}\n\n## Deliverables\n\n`;
@@ -154,7 +154,7 @@ export async function addPhase(
   const rawContent = matter.stringify(body, frontmatter);
   await fs.writeFile(targetPath, rawContent, "utf-8");
 
-  // Update plan.md to include reference and total phases
+  // Update plan.md to include reference, document manifest, and total phases
   try {
     const rootRaw = await fs.readFile(plan.root.path, "utf-8");
     const parsedRoot = matter(rootRaw);
@@ -162,6 +162,16 @@ export async function addPhase(
     rootData.totalPhases = nextPhaseNum;
     if (rootData.activePhase === undefined) {
       rootData.activePhase = 1;
+    }
+
+    // Register new phase in documents array (before limitation.md if present)
+    if (Array.isArray(rootData.documents) && !rootData.documents.includes(phaseFilename)) {
+      const limitationIndex = rootData.documents.indexOf("limitation.md");
+      if (limitationIndex !== -1) {
+        rootData.documents.splice(limitationIndex, 0, phaseFilename);
+      } else {
+        rootData.documents.push(phaseFilename);
+      }
     }
 
     let rootBody = parsedRoot.content;

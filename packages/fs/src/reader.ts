@@ -67,10 +67,11 @@ export async function readPlan(cwd: string, slug: string): Promise<Plan | null> 
 
     try {
       const files = await fs.readdir(planDir);
-      for (const file of files) {
-        if (!file.endsWith(".md") || file === "plan.md") continue;
-        const docPath = path.join(planDir, file);
-        const doc = await readDocumentFile(docPath);
+      const subFiles = files.filter((file) => file.endsWith(".md") && file !== "plan.md");
+      const subDocs = await Promise.all(
+        subFiles.map((file) => readDocumentFile(path.join(planDir, file)))
+      );
+      for (const doc of subDocs) {
         if (doc) {
           documents.push(doc);
         }
@@ -101,14 +102,15 @@ export async function readPlan(cwd: string, slug: string): Promise<Plan | null> 
     try {
       const files = await fs.readdir(docsDir);
       // Find all files belonging to this slug, e.g. scope-<slug>.md, feature-<slug>.md, etc.
-      for (const file of files) {
-        if (!file.endsWith(".md") || file === `plan-${slug}.md`) continue;
-        if (file.includes(`-${slug}.md`)) {
-          const docPath = path.join(docsDir, file);
-          const doc = await readDocumentFile(docPath);
-          if (doc && doc.frontmatter.plan === slug) {
-            documents.push(doc);
-          }
+      const candidateFiles = files.filter(
+        (file) => file.endsWith(".md") && file !== `plan-${slug}.md` && file.includes(`-${slug}.md`)
+      );
+      const legacySubDocs = await Promise.all(
+        candidateFiles.map((file) => readDocumentFile(path.join(docsDir, file)))
+      );
+      for (const doc of legacySubDocs) {
+        if (doc && doc.frontmatter.plan === slug) {
+          documents.push(doc);
         }
       }
     } catch {
@@ -141,11 +143,15 @@ export async function listPlans(cwd: string): Promise<PlanSummary[]> {
         const mode = fm.mode ?? "deep";
 
         let docCount = 1;
-        try {
-          const dirFiles = await fs.readdir(path.join(plansDir, slug));
-          docCount = dirFiles.filter((f) => f.endsWith(".md")).length;
-        } catch {
-          // ignore
+        if (Array.isArray(fm.documents) && fm.documents.length > 0) {
+          docCount = fm.documents.length;
+        } else {
+          try {
+            const dirFiles = await fs.readdir(path.join(plansDir, slug));
+            docCount = dirFiles.filter((f) => f.endsWith(".md")).length;
+          } catch {
+            // ignore
+          }
         }
 
         planSummaries.set(slug, {

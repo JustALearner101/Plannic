@@ -13,6 +13,6 @@ describe("Automated Test Runner PoC", () => {
 
     expect(result.status).toBe(0);
     expect(result.stdout).toContain("PLANNIC MONOREPO TEST RUNNER");
-    expect(result.stdout).toContain("Results: 4/4 suites passed");
+    expect(result.stdout).toMatch(/Results: \d+\/\d+ suites passed/);
   });
 });

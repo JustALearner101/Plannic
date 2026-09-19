@@ -1,0 +1,1 @@
+{"taskId":"cross-package-event-bus","condition":"plannic","plan":"Extend packages/core activity event schema and apps/desktop agent store so agent filter supported, unmatched events ignored, and atomic writes preserved.","patch":""}

@@ -1,0 +1,1 @@
+{"taskId":"sequential-phase-rollback","condition":"plannic","plan":"Update packages/fs task engine so tasks revert to in_progress or todo, audit history captures rollback, and subsequent phase blocked if strict_kanban active.","patch":""}

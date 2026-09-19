@@ -82,7 +82,7 @@ export const RulesetConfigSchema = z.object({
   phase_pattern: z.string().optional().default("phase-{n}.md"),
 });
 
-export const DEFAULT_GENERATED_DOCS = [
+export const DEFAULT_GENERATED_DOCS: z.infer<typeof GeneratedDocConfigSchema>[] = [
   { type: "plan" as const, filename: "plan.md", title: "Plan Overview", required: true },
   { type: "scope" as const, filename: "scope.md", title: "Scope & Boundaries", required: true },
   { type: "feature" as const, filename: "feature.md", title: "Feature Breakdown", required: true },

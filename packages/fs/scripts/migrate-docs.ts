@@ -31,18 +31,18 @@ async function main() {
   const result = await migrateAllPlans({ cwd, slug, dryRun });
 
   if (result.totalPlans === 0) {
-    console.log("ℹ️  No legacy flat plans found in .docs/. Nothing to migrate.");
+    console.log("[INFO] No legacy flat plans found in .docs/. Nothing to migrate.");
     process.exit(0);
   }
 
   for (const m of result.migrated) {
     if (m.success) {
-      console.log(`\n✅ Plan: ${m.slug}`);
+      console.log(`\n[OK] Plan: ${m.slug}`);
       for (const f of m.filesMoved) {
-        console.log(`   - ${path.relative(cwd, f.from)}  ➔  ${path.relative(cwd, f.to)}`);
+        console.log(`   - ${path.relative(cwd, f.from)}  ->  ${path.relative(cwd, f.to)}`);
       }
     } else {
-      console.error(`\n❌ Plan: ${m.slug} FAILED`);
+      console.error(`\n[FAIL] Plan: ${m.slug} FAILED`);
       console.error(`   Reason: ${m.error}`);
     }
   }
@@ -50,9 +50,9 @@ async function main() {
   console.log("\n==================================================");
   console.log(`Summary: ${result.successCount}/${result.totalPlans} plans successfully processed.`);
   if (dryRun) {
-    console.log("💡 Run without '--dry-run' to apply these changes.");
+    console.log("[INFO] Run without '--dry-run' to apply these changes.");
   } else {
-    console.log("✨ All plans migrated to hierarchical structure (.docs/plans/<slug>/)!");
+    console.log("[DONE] All plans migrated to hierarchical structure (.docs/plans/<slug>/)!");
   }
   console.log("==================================================");
 

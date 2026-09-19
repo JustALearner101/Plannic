@@ -37,7 +37,7 @@ When the user mentions a specific spec (e.g. `/plannic-spec mcp-protocol-archite
 
 Structure:
 ```markdown
-# 📐 Specification: [Title]
+# Specification: [Title]
 
 > Category: **[Category]** | Version: **v[Version]** | Status: **[Status]**  
 > Last Updated: **[Timestamp]**
@@ -47,7 +47,7 @@ Structure:
 [Full Body Content with Headings, Schemas, Endpoints, and Mermaid Diagrams]
 
 ---
-💡 *To update this specification based on recent code changes, ask: "Update spec [slug] with [changes]".*
+*To update this specification based on recent code changes, ask: "Update spec [slug] with [changes]".*
 ```
 
 3. **Respond to User**:
@@ -70,27 +70,27 @@ When the user runs `/plannic-spec` without arguments or asks to see all specs:
 
 Structure:
 ```markdown
-# 📐 Living Specifications & API Contracts
+# Living Specifications & API Contracts
 
 > Permanent system blueprints for solo developers and AI coding agents
 
 ---
 
-### 🏛️ System Architecture
+### System Architecture
 - **[Title]** (`v[Version]`, `[Status]`) — `spec-[slug].md`  
   *[Description]*
 
-### 🔌 API & Integration Contracts
+### API & Integration Contracts
 - **[Title]** (`v[Version]`, `[Status]`) — `spec-[slug].md`  
   *[Description]*
 
-### 🗄️ Database & Data Models
+### Database & Data Models
 - **[Title]** (`v[Version]`, `[Status]`) — `spec-[slug].md`  
   *[Description]*
 
 ---
 
-### 💡 Quick Commands
+### Quick Commands
 - Inspect a spec: `/plannic-spec <slug>`
 - Create a new spec: Ask me *"Buat spec baru untuk [Nama Modul]"*
 ```

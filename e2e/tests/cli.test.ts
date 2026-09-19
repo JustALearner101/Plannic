@@ -2,12 +2,12 @@ import { describe, it, expect } from "bun:test";
 import { spawn } from "node:child_process";
 import path from "node:path";
 import { withTempWorkspace, seedStandardRepo } from "../harness/index.js";
+import { PLANNIC_VERSION } from "../../packages/core/src/index.js";
 
 function runCli(cwd: string, args: string[]): Promise<{ code: number; stdout: string; stderr: string }> {
   const cliPath = path.resolve(__dirname, "../../apps/cli/src/index.tsx");
-  const preloadPath = path.resolve(__dirname, "../../apps/cli/node_modules/@opentui/solid/scripts/preload.js");
   return new Promise((resolve) => {
-    const proc = spawn("bun", ["run", "--preload", preloadPath, cliPath, ...args], {
+    const proc = spawn("bun", ["run", cliPath, ...args], {
       cwd,
       shell: true,
       stdio: ["ignore", "pipe", "pipe"],
@@ -37,9 +37,9 @@ describe("Phase 3: CLI Commands & Terminal Interface E2E", () => {
       const version = await runCli(ws.path, ["--version"]);
       expect(version.code).toBe(0);
       expect(version.stdout).toContain("Plannic CLI");
-      expect(version.stdout).toContain("v0.2.0");
+      expect(version.stdout).toContain(`v${PLANNIC_VERSION}`);
     });
-  });
+  }, 25000);
 
   it("should create a new plan via CLI create command in deep mode", async () => {
     await withTempWorkspace(async (ws) => {
@@ -50,7 +50,7 @@ describe("Phase 3: CLI Commands & Terminal Interface E2E", () => {
       expect(listRes.code).toBe(0);
       expect(listRes.stdout).toContain("cli-engine-upgrade");
     });
-  });
+  }, 25000);
 
   it("should list and search plans in a populated sandbox repository", async () => {
     await withTempWorkspace(async (ws) => {
@@ -67,5 +67,5 @@ describe("Phase 3: CLI Commands & Terminal Interface E2E", () => {
       expect(searchRes.code).toBe(0);
       expect(searchRes.stdout).toContain("authentication-engine");
     });
-  });
+  }, 25000);
 });

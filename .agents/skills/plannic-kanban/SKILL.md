@@ -28,9 +28,9 @@ This skill inspects active implementation plans and renders a clean, categorized
 ### 2. Extract Phase Checklist Tasks
 Find all documents with `type === "phase"` (e.g. `phase-1-<slug>.md`):
 - Parse all checklist lines:
-  - `- [ ]` or marked as todo ➔ **To Do**
-  - `- [/]` or containing `in_progress` ➔ **In Progress**
-  - `- [x]` or marked as done ➔ **Done**
+  - `- [ ]` or marked as todo -> **To Do**
+  - `- [/]` or containing `in_progress` -> **In Progress**
+  - `- [x]` or marked as done -> **Done**
 - Calculate progress metrics:
   - $\text{Completion Rate} = \frac{\text{Done}}{\text{Total}} \times 100\%$
   - Generate visual ASCII progress bar: e.g. `[████████░░] 80% (8/10 Tasks)`
@@ -44,25 +44,25 @@ Use `write_to_file` to write `<appDataDir>\brain\<conversation-id>\plannic_kanba
 
 Structure of the artifact:
 ```markdown
-# 📋 Kanban Task Board: [Plan Name]
+# Kanban Task Board: [Plan Name]
 
 > Active Phase: **[Phase Title]**  
 > Overall Progress: **[████████░░] 80% (8/10 Tasks)**
 
 ---
 
-### ⏳ In Progress ([Count])
+### [IN PROGRESS] ([Count])
 - [ ] **Task [ID]**: [Task title and module affected]
 
-### 📝 To Do ([Count])
+### [TO DO] ([Count])
 - [ ] **Task [ID]**: [Task title and description]
 
-### ✅ Done ([Count])
+### [DONE] ([Count])
 - [x] **Task [ID]**: [Task title]
 
 ---
 
-### 💡 Task Actions
+### Task Actions
 - To move a task to in-progress or done, simply tell me:
   > *"Tolong pindahkan task [ID/Title] ke done"* (I will execute `move_task` for you).
 - Re-run `/plannic-kanban` at any time to refresh this board.

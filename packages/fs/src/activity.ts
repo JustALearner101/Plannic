@@ -86,8 +86,8 @@ export async function emitAgentActivity(
     activeAgent,
   };
 
-  // Write atomically via temporary file
-  const tmpPath = `${activityFilePath}.tmp.${Date.now()}`;
+  // Write atomically via temporary file (with unique entropy to avoid collisions)
+  const tmpPath = `${activityFilePath}.tmp.${Date.now()}_${Math.random().toString(36).slice(2)}`;
   await fs.writeFile(tmpPath, JSON.stringify(streamData, null, 2), "utf-8");
   await fs.rename(tmpPath, activityFilePath);
 

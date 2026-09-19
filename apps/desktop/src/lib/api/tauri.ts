@@ -61,7 +61,7 @@ export async function openDirectoryDialog(): Promise<string | null> {
   }
 
   // 3. Fallback: prompt for path (works in web browser or if OS dialog fails)
-  const manual = window.prompt('Enter project folder path (e.g. D:\\Project\\Plannic):');
+  const manual = window.prompt('Enter project folder path (e.g. /path/to/project or C:\\projects\\my-app):');
   return manual ? manual.trim() : null;
 }
 

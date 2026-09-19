@@ -18,5 +18,5 @@ try {
   Copy-Item (Join-Path $temp 'plannic.exe') (Join-Path $installDir 'plannic.exe') -Force
   $userPath = [Environment]::GetEnvironmentVariable('Path', 'User'); $entries = @($userPath -split ';' | Where-Object { $_ })
   if ($entries -notcontains $installDir) { [Environment]::SetEnvironmentVariable('Path', (($entries + $installDir) -join ';'), 'User') }
-  Write-Output "Installed plannic to $installDir. Open a new terminal, then run: plannic init"
+  Write-Output "✔ Installed plannic to $installDir.`nOpen a new terminal, then run:`n  1. plannic doctor`n  2. plannic init"
 } finally { Remove-Item -LiteralPath $temp -Recurse -Force -ErrorAction SilentlyContinue }

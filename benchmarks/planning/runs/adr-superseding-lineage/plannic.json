@@ -1,0 +1,1 @@
+{"taskId":"adr-superseding-lineage","condition":"plannic","plan":"Use packages/fs to ensure ADR #0001 marked superseded, create new ADR with packages/core types, verify new ADR links to superseded ADR, and confirm audit entry recorded.","patch":""}

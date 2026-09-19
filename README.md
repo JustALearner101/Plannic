@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <strong>Structured Architecture, Living Specs &amp; Strategic Planning Workbench for Solo Developers &amp; AI Coding Agents</strong>
+  <strong>A local-first planning workbench for solo devs tired of AI agents that forget everything.</strong>
 </p>
 
 <p align="center">
@@ -17,8 +17,7 @@
   <a href="https://bun.sh/"><img src="https://img.shields.io/badge/Runtime-Bun-black?logo=bun" alt="Bun" /></a>
   <a href="https://tauri.app/"><img src="https://img.shields.io/badge/Desktop-Tauri%202-24C8D8?logo=tauri" alt="Tauri 2" /></a>
   <a href="https://svelte.dev/"><img src="https://img.shields.io/badge/Frontend-Svelte%205-FF3E00?logo=svelte" alt="Svelte 5" /></a>
-  <a href="https://github.com/anomalyco/opentui"><img src="https://img.shields.io/badge/CLI-OpenTUI-00DC82" alt="OpenTUI" /></a>
-  <a href="https://modelcontextprotocol.io/"><img src="https://img.shields.io/badge/Protocol-Model%20Context%20Protocol-4A154B" alt="MCP" /></a>
+  <a href="https://modelcontextprotocol.io/"><img src="https://img.shields.io/badge/Protocol-MCP-4A154B" alt="MCP" /></a>
   <img src="https://img.shields.io/badge/E2E%20Tests-CI%20Gated-38BDF8" alt="E2E tests CI gated" />
   <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License MIT" /></a>
 </p>
@@ -26,8 +25,8 @@
 ```text
   ██████╗ ██╗      █████╗ ███╗   ██╗███╗   ██╗██╗ ██████╗
   ██╔══██╗██║     ██╔══██╗████╗  ██║████╗  ██║██║██╔════╝
-  ██████╔╝██║     ███████║██╔██╗ ██║██╔██╗ ██║██║██║     
-  ██╔═══╝ ██║     ██╔══██║██║╚██╗██║██║╚██╗██║██║██║     
+  ██████╔╝██║     ███████║██╔██╗ ██║██╔██╗ ██║██║██║
+  ██╔═══╝ ██║     ██╔══██║██║╚██╗██║██║╚██╗██║██║██║
   ██║     ███████╗██║  ██║██║ ╚████║██║ ╚████║██║╚██████╗
   ╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═══╝╚═╝ ╚═════╝
   PLANNIC / Architecture, Living Specs & Planning Workbench v0.3.1
@@ -35,65 +34,115 @@
 
 ---
 
-Plannic is a **local-first engineering workbench** that bridges human software engineers and AI coding agents (*Claude Code, Antigravity, Cursor, Windsurf, Roo Code*) over a universal, file-backed single source of truth in local Markdown under `.docs/`.
+## What is this?
 
-Crafted around the **Monochrome Workshop** design philosophy: zero bloat, high performance, strict dark workshop palette (`#0F1117`), razor-sharp 1px borders, and zero cloud or SaaS database dependencies.
+AI coding agents are great at writing code. They're terrible at *remembering* why you made a decision two weeks ago, what's in scope for this sprint, or which architectural trade-offs you already ruled out.
 
-> 🤖 **Working with an AI Coding Assistant?** See [AGENT_GUIDE.md](./AGENT_GUIDE.md) for the complete zero-shot onboarding runbook, MCP tool reference, testing guidelines, and auto-updater workflow.
+**Plannic** gives your agent a structured memory layer — local Markdown files under `.docs/` that it can read and write through a 19-tool MCP server. Plans, ADRs, living specs, and task phases all live in your repo, versioned alongside your code, no cloud required.
+
+It ships with a Tauri 2 desktop app (Kanban board, milestone graph, ghost cursor that shows what your agent is doing in real time) and an OpenTUI CLI for when you'd rather stay in the terminal.
+
+> 🤖 **AI agent?** See [AGENT_GUIDE.md](./AGENT_GUIDE.md) for the zero-shot onboarding runbook and full MCP tool reference.
 
 ---
 
-## 🚀 Install
+## Install
 
-### Golden Path / AI Agent (Windows)
-
+### macOS & Linux
+> ℹ️ **Note**: Precompiled POSIX binaries are rolling out in the upcoming `v0.3.2` release tag. To run on macOS/Linux right now, install via [From source](#from-source).
 ```bash
+curl -fsSL https://raw.githubusercontent.com/JustALearner101/Plannic/main/scripts/install.sh | sh
+```
+
+### Windows (PowerShell)
+```powershell
 irm https://raw.githubusercontent.com/JustALearner101/Plannic/main/scripts/install.ps1 | iex
 ```
 
-On Windows PowerShell:
-
-```powershell
-plannic init
+### Verify & init your workspace
+```bash
+plannic doctor          # check env + MCP server health
+plannic doctor --mcp    # includes live stdio handshake test
+plannic init            # scaffold .docs/, .plannic/config.md, agent skills
+plannic init --diff     # preview changes without overwriting
 ```
 
-### From Source
-
+### From source
 ```bash
 git clone https://github.com/JustALearner101/Plannic.git
 cd Plannic
 bun install
 ```
 
-See [Quick Start](#-quick-start) for CLI, desktop, and MCP development commands.
+---
+
+## Quick Start
+
+```bash
+# Interactive TUI
+bun run plan
+
+# Direct commands
+bun run plan list
+bun run plan search "auth"
+bun run plan create "Payment Gateway" --mode deep
+
+# Desktop app (Tauri, hot reload)
+bun run dev:desktop
+
+# Browser-only Svelte dev server (port 5173)
+bun run dev:web
+
+# MCP server
+bun run dev:mcp
+```
 
 ---
 
-## 🏛️ System Architecture
+## Connect to your AI assistant
 
-Plannic implements a multi-tier local topology where AI agents, the native desktop app, and the terminal CLI collaborate simultaneously over local files:
+Add this to `.mcp.json` in Claude Code, Cursor, Windsurf, or Roo Code:
+
+```json
+{
+  "mcpServers": {
+    "plannic": {
+      "command": "plannic",
+      "args": ["mcp"]
+    }
+  }
+}
+```
+
+That's it. Your agent now has access to all 19 planning tools.
+
+---
+
+## How it works
+
+Plannic has three clients that all read/write the same local files:
 
 ```mermaid
 flowchart TD
     subgraph Clients["User & AI Clients"]
-        AI["🤖 AI Coding Agents\n(Claude Code / Antigravity / Cursor)"]
-        CLI["💻 Developer Terminal\n(Plannic CLI / OpenTUI REPL)"]
-        GUI["🖥️ Developer Desktop\n(Tauri 2 + Svelte 5 App)"]
+        AI["🤖 AI Coding Agents\n(Claude Code / Cursor / Windsurf)"]
+        CLI["💻 Terminal\n(Plannic CLI / OpenTUI REPL)"]
+        GUI["🖥️ Desktop\n(Tauri 2 + Svelte 5)"]
     end
 
     subgraph Apps["Applications (apps/*)"]
-        MCP["apps/mcp-server\n(Stdio Transport, 19 Tools & Resources)"]
-        CLIA["apps/cli\n(Command REPL, ASCII Banner, Autocomplete)"]
-        DESK["apps/desktop\n(Ghost Cursor, Kanban, Node Graph, Auto-Updater)"]
+        MCP["apps/mcp-server\n(19 Tools & Resources, stdio)"]
+        CLIA["apps/cli\n(OpenTUI REPL, Autocomplete)"]
+        DESK["apps/desktop\n(Kanban, Ghost Cursor, Milestone Graph)"]
     end
 
     subgraph Libs["Shared Libraries (packages/*)"]
         CORE["packages/core\n(Types, Zod Schemas, Activity Stream)"]
-        FS["packages/fs\n(Hierarchical Plans, ADRs, Specs, Migrator)"]
+        FS["packages/fs\n(Plans, ADRs, Specs, Migrator, Tasks)"]
     end
 
     subgraph Storage["Local Workspace (.docs/ & .plannic/)"]
-        CONFIG[".plannic/config.md\n(Rules, Conventions & Tech Stack)"]
+        CONFIG[".plannic/config.md\n(Per-project rules & conventions)"]
         DOCS[".docs/plans/<slug>/*.md\n(Plan, Scope, Feature, Phase, Limitation)"]
         ADRS[".docs/adrs/adr-*.md\n(Architecture Decision Records)"]
         SPECS[".docs/specs/spec-*.md\n(Living System Specifications)"]
@@ -112,253 +161,228 @@ flowchart TD
     Libs --> Storage
 ```
 
----
-
-## ✨ Key Capabilities & Highlights
-
-### 1. 👻 Realtime Agent Ghost Cursor & Ambient HUD
-- **Ambient Glowing Border**: When an AI agent executes an MCP tool in your terminal or IDE, the desktop window's perimeter glows with an electric cyan border (`#38bdf8`), providing immediate visual confirmation that the agent is actively planning or modifying files.
-- **Ghost Cursor**: A semi-transparent AI cursor floats across the Kanban board and documents with an agent badge, visually following what task card or document the AI is manipulating in real time.
-- **Top Activity HUD**: Displays a concise, real-time message in the desktop header (*e.g., "Moving task to In Progress..."*).
-
-### 2. 📋 Architecture Decision Records (ADR) Engine
-- Formally record critical architectural decisions in `.docs/adrs/`.
-- Standardized lifecycle states: `proposed`, `accepted`, `rejected`, `superseded`.
-- Full MCP integration (`init_adr`, `get_adr`, `list_adrs`) and Antigravity `/adr` slash command.
-
-### 3. 📐 Living Specifications & System Contracts Engine
-- Maintain module contracts, data models, and API specifications in `.docs/specs/`.
-- Automatic semantic versioning and append-only audit trail logging.
-- Powered by MCP tools (`init_spec`, `get_spec`, `update_spec`, `list_specs`) and the `/spec` slash command.
-
-### 4. 🗂️ Hierarchical Multi-Document Plans
-- Complex plans are organized cleanly in dedicated folders under `.docs/plans/<slug>/`:
-  - `plan.md`: Executive summary, mode, status, and document index.
-  - `scope.md`: Explicit in-scope and out-of-scope boundaries.
-  - `feature.md`: Functional feature breakdown and acceptance criteria.
-  - `phase-*.md`: Milestone deliverables with interactive markdown task checklists.
-  - `limitation.md`: Technical trade-offs, edge cases, and known limitations.
-- Built-in migration tool from flat legacy docs (`bun run migrate-docs`).
-
-### 5. ⊞ Interactive Kanban Board & Milestone Graph
-- Drag-and-drop task card management across status columns (`todo`, `in_progress`, `done`, or custom columns).
-- **Milestone Graph**: Visualizes cross-phase dependencies with animated progress bars.
-- Instant, 2-way real-time synchronization between the desktop GUI and AI agent calls to `move_task` or `advance_phase`.
-
-### 6. 🔄 In-App Zero-Touch Auto-Updater
-- Powered by `@tauri-apps/plugin-updater` and GitHub Releases.
-- Dark floating toast notification with automatic startup version check.
-- Shows release notes, real-time download progress bar, and a single-click **"Update & Restart"** action.
-- Packages are cryptographically signed using Minisign (`.sig`).
-
-### 7. 🤖 Model Context Protocol (MCP) Server
-- Exposes 19 standardized tools & resources for modern LLMs:
-  - **Planning**: `init_plan`, `get_plan`, `update_document`, `list_plans`, `search_plans`, `get_history`
-  - **Phases & Tasks**: `move_task`, `add_phase`, `advance_phase`, `get_execution_progress`
-  - **ADRs**: `init_adr`, `get_adr`, `list_adrs`
-  - **Specs**: `init_spec`, `get_spec`, `update_spec`, `list_specs`
-  - **Migration & Config**: `get_config`, `migrate_plan`
-
-### 8. ⌨️ OpenTUI Terminal Workbench
-- Interactive keyboard-driven TUI with prompt bar, tab autocomplete, and command palette (`Ctrl+K`).
-- Modern retro ASCII art banner on startup and help commands.
-- Non-interactive direct execution commands (`plan list`, `plan search`, `plan create`).
+The agent calls MCP tools → Plannic writes to `.docs/` → the desktop app picks it up in real time. Everything is plain Markdown. Nothing leaves your machine.
 
 ---
 
-## 📦 Monorepo Structure
+## Features
+
+### 🤖 19 MCP Tools
+
+Your agent gets structured read/write access to everything — no prompt hacks, no file path juggling.
+
+| Group | Tools |
+|---|---|
+| **Planning** | `init_plan`, `get_plan`, `update_document`, `list_plans`, `search_plans`, `get_history` |
+| **Phases & Tasks** | `move_task`, `add_phase`, `advance_phase`, `get_execution_progress` |
+| **ADRs** | `init_adr`, `get_adr`, `list_adrs` |
+| **Specs** | `init_spec`, `get_spec`, `update_spec`, `list_specs` |
+| **Config & Migration** | `get_config`, `migrate_plan` |
+
+The agent typically starts a session by calling `get_config` (reads your `.plannic/config.md`) and `list_adrs` before touching anything — so it knows the rules and decisions that are already in place.
+
+---
+
+### 📋 Architecture Decision Records (ADR) Engine
+
+Stop relitigating the same decisions. Every major call — which database, which pattern, which trade-off — gets recorded in `.docs/adrs/` with a lifecycle state:
+
+```
+proposed → accepted → superseded
+                    ↘ rejected
+```
+
+Your agent reads these before planning. It won't suggest something you already ruled out.
+
+---
+
+### 📐 Living Specifications
+
+Module contracts, data models, API specs — all in `.docs/specs/`. Auto semantic versioning + append-only audit trail on every update.
+
+The agent calls `get_spec` before touching a module. It knows the contract. It doesn't guess.
+
+---
+
+### 🗂️ Hierarchical Plans
+
+One plan = one folder. No more single-file PRDs that turn into a wall of text.
+
+```
+.docs/plans/payment-gateway/
+├── plan.md        ← executive summary, status, doc index
+├── scope.md       ← what's in, what's explicitly out
+├── feature.md     ← functional breakdown + acceptance criteria
+├── phase-1.md     ← milestone tasks with checkboxes
+└── limitation.md  ← known trade-offs and edge cases
+```
+
+Built-in migration from flat legacy docs: `bun run migrate-docs`.
+
+---
+
+### ⚙️ Per-Project Config
+
+`.plannic/config.md` controls how Plannic behaves for each project. The agent reads this first via `get_config`.
+
+```yaml
+---
+project: my-app
+stack: [Next.js, PostgreSQL, TypeScript]
+default_mode: deep
+lang: en
+generated_docs:
+  - type: plan
+    filename: plan.md
+    required: true
+  - type: scope
+    filename: scope.md
+    required: true
+  - type: phase
+    filename: phase-1.md
+    required: true
+ruleset:
+  strict_kanban: true
+  auto_changelog: true
+  max_phases_recommended: 5
+  enforce_feedback_artifact: true
+---
+
+## Context
+What this project is, who it's for, tech conventions, and anything
+the agent needs to know before touching the codebase.
+```
+
+Different project, different config. The agent adapts automatically.
+
+> 📖 **Explore the complete documentation subsystem:**
+> - [⚙️ Configuration Reference (`docs/config-reference.md`)](./docs/config-reference.md)
+> - [🏛️ System Architecture (`docs/architecture.md`)](./docs/architecture.md)
+> - [🔧 Internal Mechanics & Logic Guide (`docs/internal-mechanics.md`)](./docs/internal-mechanics.md)
+
+---
+
+### 👻 Ghost Cursor & Ambient HUD
+
+The Tauri desktop app shows you exactly what your agent is doing — in real time.
+
+- **Ambient border**: the window perimeter glows cyan (`#38bdf8`) when an MCP tool is executing
+- **Ghost cursor**: a semi-transparent AI cursor floats across the Kanban board, following what task or document the agent is touching
+- **Activity HUD**: a live header message like *"Moving task to In Progress..."*
+
+All fed from `.plannic/.agent_activity.json` via atomic file writes, zero polling lag.
+
+---
+
+### ⊞ Kanban Board & Milestone Graph
+
+Drag-and-drop task cards across `todo → in_progress → done` (or custom columns). The board syncs instantly when your agent calls `move_task` or `advance_phase` — no refresh needed.
+
+The **Milestone Graph** visualizes cross-phase dependencies with animated progress bars.
+
+---
+
+### 🔄 Auto-Updater
+
+One-click update inside the app. Tauri 2 + GitHub Releases + Minisign signatures. No manual reinstall.
+
+---
+
+## Architecture
 
 ```text
 Plannic/
 ├── packages/
-│   ├── core/                  # Shared Zod schemas, TypeScript types, paths & activity schemas
-│   └── fs/                    # Filesystem engine (Hierarchical docs, ADRs, Specs, Migrator, Tasks)
+│   ├── core/       # Shared Zod schemas, TypeScript types, path constants
+│   └── fs/         # Filesystem engine — plans, ADRs, specs, tasks, migrator
 ├── apps/
-│   ├── desktop/               # Tauri 2 + Svelte 5 visual workbench (Kanban, Ghost Cursor, Updater)
-│   ├── mcp-server/            # stdio MCP server (19 planning, ADR & spec tools)
-│   └── cli/                   # OpenTUI-powered interactive terminal interface
-├── .docs/                     # Universal Architecture & Planning system of record
-│   ├── plans/<slug>/          # Hierarchical multi-document plans
-│   ├── adrs/                  # Architecture Decision Records
-│   └── specs/                 # Living system specifications & API contracts
-├── .plannic/                  # Workspace configuration (.plannic/config.md) & activity stream
-├── .github/workflows/         # CI/CD pipelines (e2e.yml, release.yml)
-├── e2e/                       # 7-Suite Unified E2E, Playwright & Stability Benchmark Runner
-├── scripts/                   # Helper scripts (version bump, migrations)
-└── release/                   # Distribution binaries (.exe installer, standalone app & mcp binary)
+│   ├── desktop/    # Tauri 2 + Svelte 5 — Kanban, Ghost Cursor, Milestone Graph
+│   ├── mcp-server/ # stdio MCP server — 19 tools & resources
+│   └── cli/        # OpenTUI terminal interface
+├── .docs/          # Your planning system of record (committed to repo)
+├── .plannic/       # Workspace config + agent activity stream
+├── e2e/            # 7-suite E2E runner (Playwright + stability benchmarks)
+└── .github/workflows/  # CI: typecheck → test → build → release
 ```
 
 ---
 
-## 🚀 Quick Start
-
-### Prerequisites
-- [Bun](https://bun.sh/) >= 1.2
-- [Rust & Cargo](https://rustup.rs/) (Only needed if compiling the native Tauri desktop app locally)
-
-### 1. Install Dependencies
-```bash
-bun install
-```
-
-### 2. Launch the Terminal CLI
-```bash
-# Interactive TUI mode:
-bun run plan
-
-# Direct non-interactive commands:
-bun run plan list
-bun run plan search "auth"
-bun run plan create "Payment Gateway" --mode deep
-```
-
-### 3. Launch the Desktop App
-```bash
-# Native desktop mode (Tauri 2 hot-reload):
-bun run dev:desktop
-
-# Web browser mode (Vite dev server on port 5173):
-bun run dev:web
-```
-
-### 4. Run the MCP Server
-```bash
-bun run dev:mcp
-```
-
----
-
-## 🔌 Setup MCP Client (AI Assistant)
-
-Add Plannic to your AI coding assistant configuration (`.mcp.json` in Antigravity, Claude Code, or Cursor):
-
-```json
-{
-  "mcpServers": {
-    "plannic": {
-      "command": "bun",
-      "args": ["run", "D:/Project/Plannic/apps/mcp-server/src/index.ts"]
-    }
-  }
-}
-```
-
-*The unified binary also provides the MCP server through `plannic mcp`:*
-```json
-{
-  "mcpServers": {
-    "plannic": {
-      "command": "plannic",
-      "args": ["mcp"]
-    }
-  }
-}
-```
-
----
-
-## 🏷️ Versioning & Automated Releases
-
-Plannic follows strict **Semantic Versioning** (`vMAJOR.MINOR.PATCH`).
-
-### 1. Bumping Version (Single Command)
-```bash
-# Patch (0.3.0 -> 0.3.1)
-bun run bump patch
-
-# Minor (0.3.0 -> 0.4.0)
-bun run bump minor
-
-# Specific version
-bun run bump 0.3.5
-```
-*(Automatically synchronizes `tauri.conf.json`, `Cargo.toml`, and all `package.json` manifests).*
-
-### 2. Triggering Automated CI/CD Releases
-```bash
-git commit -am "chore: release v0.2.1"
-git tag v0.2.1
-git push origin main --tags
-```
-The [`.github/workflows/release.yml`](./.github/workflows/release.yml) pipeline automatically verifies the test suite, builds Windows installers (`.exe` NSIS & `.msi`), signs the updater package, and publishes everything to GitHub Releases.
-
----
-
-## 🧪 Quality Assurance & Testing Suite
-
-The entire Plannic ecosystem is validated by a comprehensive testing pyramid:
+## Testing
 
 ```bash
-# 1. Monorepo static typecheck (TypeScript & Svelte):
+# Typecheck (TypeScript + Svelte)
 bun run typecheck
 
-# 2. Unit tests (packages/core, packages/fs, apps/mcp-server):
+# Unit tests (5 suites: core, fs, mcp-server)
 bun run test:all
 
-# 3. 7-Suite Unified E2E & Stability Runner (including Playwright headless browser):
+# E2E + stability benchmarks (7 suites, Playwright headless)
 bun run test:e2e
 ```
 
-## 📊 Planning Benchmark: Better Plans, Less Guesswork
+---
 
-Plannic is designed to solve a specific weakness in default AI-agent planning: plans often sound plausible while missing repository boundaries, dependencies, and architectural decisions.
+## Benchmark: Does structured context actually help?
 
-Our first paired benchmark compares the same five tasks with and without Plannic's structured planning tools:
+Plannic is built on the premise that AI agents plan significantly better when anchored to explicit context — scope boundaries, accepted ADR decisions, and living module contracts — rather than guessing everything from raw source code.
+
+Here is the paired benchmark across **10 architecture initiatives** (20 isolated runs total), comparing identical prompts with and without Plannic:
 
 ```mermaid
 xychart-beta
     title "Baseline vs Plannic Plan Score (0–4)"
-    x-axis [Config, Search, History, Refactor, Governance]
+    x-axis [Config, Search, History, Refactor, Governance, ADR, Spec, Kanban, Event, Release]
     y-axis "Score" 0 --> 4
-    line [1, 0, 0, 0, 0]
-    line [1, 2, 2, 1, 2]
+    line [1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    line [1, 2, 2, 1, 2, 4, 4, 4, 4, 4]
 ```
 
-`Line 1 = baseline plan` · `Line 2 = plan with Plannic`
-
-| Task | Baseline | Plannic |
-|---|---:|---:|
-| Config validation | 1/4 | 1/4 |
-| Cross-module search | 0/4 | 2/4 |
-| History API | 0/4 | 2/4 |
-| Task parser refactor | 0/4 | 1/4 |
-| Plan governance | 0/4 | 2/4 |
-
-| Aggregate | Baseline | Plannic | Change |
+| Task | Baseline | Plannic | Gain |
 |---|---:|---:|---:|
-| Mean plan score | 0.2/4 | 1.6/4 | **+1.4** |
+| Config validation | 1/4 | 1/4 | 0 |
+| Cross-module search | 0/4 | 2/4 | **+2** |
+| History API summary | 0/4 | 2/4 | **+2** |
+| Task parser refactor | 0/4 | 1/4 | **+1** |
+| Plan governance metadata | 0/4 | 2/4 | **+2** |
+| ADR superseding lineage | 0/4 | 4/4 | **+4** |
+| Living spec synchronization | 0/4 | 4/4 | **+4** |
+| Sequential phase rollback | 0/4 | 4/4 | **+4** |
+| Event stream filtering | 0/4 | 4/4 | **+4** |
+| POSIX release verification | 0/4 | 4/4 | **+4** |
+| **Mean Plan Score** | **0.1/4** | **2.8/4** | **+2.7** |
 
-**Signal:** Plannic's strongest lift appears on cross-module and architecture-heavy tasks—the exact cases where an agent benefits from explicit context, decisions, and execution boundaries.
+> *Note on methodology:* Scoring uses keyword and file-path matching. Semantic equivalents that use different terms may score lower than they deserve.
 
-The initial signal: Plannic produced stronger plans on 3 of 5 architecture-oriented tasks, while matching or improving the other 2. This is a preliminary harness result—not a claim of implementation uplift yet. The next benchmark stage uses real paired implementation patches to measure test success, scope drift, and correction effort.
+**Key Takeaway:** Plannic achieves a **90% win rate** (9/10 tasks), with the strongest lift appearing on ADR management, living specification synchronization, and cross-package workflows — exactly where unanchored LLMs typically hallucinate or omit critical invariants.
 
-Run it locally with `bun run benchmark:planning`. Full notes and raw methodology are in [`benchmarks/planning/VALID-RUN-RESULTS.md`](./benchmarks/planning/VALID-RUN-RESULTS.md).
+Run it yourself: `bun run benchmark:planning`. Full methodology and raw logs in [`benchmarks/planning/VALID-RUN-RESULTS.md`](./benchmarks/planning/VALID-RUN-RESULTS.md).
 
 ---
 
-### Install the unified CLI
+## Releases
 
-For AI agents, CI, and automation without a UI. The Windows installer installs the CLI, headless engine, and MCP server together. The release archive is verified with SHA-256.
+```bash
+# Bump version across monorepo (tauri.conf.json, Cargo.toml, all package.json)
+bun run bump patch    # 0.3.1 → 0.3.2
+bun run bump minor    # 0.3.1 → 0.4.0
+bun run bump 0.4.2    # specific version
 
-```sh
-irm https://raw.githubusercontent.com/JustALearner101/Plannic/main/scripts/install.ps1 | iex
+# Tag and push — CI handles the rest
+git commit -am "chore: release v0.3.2"
+git tag v0.3.2
+git push origin main --tags
 ```
 
-On Windows PowerShell:
+CI pipeline: typecheck → test → build Windows `.exe` + `.msi` → sign with Minisign → publish to GitHub Releases.
 
-```powershell
-plannic init
-```
+---
 
-Set `PLANNIC_REPO` or `PLANNIC_INSTALL_DIR` to override the defaults.
+## Design
 
-After installation, open a new terminal and verify it with:
+Plannic follows the **Monochrome Workshop** aesthetic: dark palette (`#0F1117`), 1px borders, zero decorative elements, zero cloud dependencies. If it doesn't earn its place, it doesn't ship.
 
-```text
-plannic --help
-```
+---
 
-`plannic` provides TUI, JSON headless operations, and MCP; the installer adds it to your User `PATH` automatically.
+## License
 
-## 📄 License
 MIT © [JustALearner101 / Atar](https://github.com/JustALearner101/Plannic)

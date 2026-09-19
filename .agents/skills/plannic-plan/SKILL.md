@@ -1,77 +1,58 @@
 ---
 name: plannic-plan
-description: Interactive Antigravity Plan Projection Assistant. Project an active or existing Plannic plan from `.docs/` into a native Antigravity Artifact with an interactive 'Proceed' button, or initialize a new architectural plan with dual projection. Activate when the user invokes `/plannic-plan` or asks to project or view an execution plan in Antigravity.
+description: Plannic Plan Inspector and Formatter. Inspect, view, or render a Plannic plan from `.docs/plans/` with visual phase progress, linked ADRs, and living specs. Activate when the user invokes `/plannic-plan` or asks to view a Plannic plan.
 ---
 
-# Plannic Plan: Antigravity Native Artifact Projection
+# Plannic Plan: CLI Inspector & Phased Progress
 
-This skill bridges Plannic's universal repository-level planning files in `.docs/` with Antigravity's native interactive **Artifact System**, rendering a branded **"1 Plannic Plan"** directly in the Antigravity UI with a live **"Proceed"** button.
+This skill provides an interactive inspection and status report for Plannic multi-phase plans stored in `.docs/plans/`. It renders directly into the Antigravity CLI via Plannic's dedicated TUI card or an informational markdown artifact (without hijacking Antigravity's native plan review modal).
+
+---
+
+## Separation from Native Antigravity `/plan`
+- Use native `/plan` for Antigravity's built-in agent planning workflows.
+- Use `/plannic-plan` or `/plannic` for Plannic repository blueprints in `.docs/`.
 
 ---
 
 ## When to Activate
 Trigger this workflow whenever:
 - The user invokes `/plannic-plan [slug]`
-- The user asks to project or sync a plan into Antigravity:
-  - *"buka plan ini di artifact..."*, *"tampilkan plan di antigravity..."*, *"project plan ke artifact..."*
-- The user asks to review an existing plan before proceeding with execution.
+- The user asks to view or check progress of a Plannic plan:
+  - *"tampilkan plannic plan [slug]..."*, *"cek progress plannic plan..."*
 
 ---
 
-## The Dual-Projection Workflow
+## Inspection & Presentation Workflow
 
 ### 1. Identify Target Plan
-- If a slug is provided (e.g., `/plannic-plan my-feature`), use it.
-- If no slug is provided:
+- If a slug is provided (e.g. `/plannic-plan auth-v2`), use it.
+- If omitted:
   - Call `list_plans(cwd=".")` via Plannic MCP.
-  - Select the most recently updated active plan, or prompt the user if ambiguous.
+  - Select the active or most recent plan.
 
-### 2. Fetch Document Tree & Context
-- Call `get_plan(slug=..., cwd=".")` via Plannic MCP to load:
-  - `plan` (metadata, title, version)
-  - `scope` (MVP boundaries, out-of-scope)
-  - `feature` (user stories, requirements)
-  - `phase` (tasks, checkboxes, status)
-  - `limitation` (risks, trade-offs)
-- Call `list_adrs(cwd=".")` and `list_specs(cwd=".")` to resolve linked decisions and contracts.
+### 2. Fetch Progress & Context
+- Call `get_plan(slug=..., cwd=".")` to load documents (`plan`, `scope`, `feature`, `phase`, `limitation`).
+- Call `get_execution_progress(slug=..., cwd=".")` to load multi-phase metrics.
+- Call `list_adrs(cwd=".")` and `list_specs(cwd=".")` to count linked architectural records.
 
-### 3. Generate the Antigravity Plan Artifact
-Write the artifact using `write_to_file` to:
-`<appDataDir>/brain/<conversationId>/plannic_plan_<slug>.md`
-
-Provide `ArtifactMetadata`:
-```json
-{
-  "UserFacing": true,
-  "RequestFeedback": true,
-  "Summary": "⚡ [PLANNIC PLAN] <Title> (v1.0) | <N> Tasks Pending Approval | Linked: <M> ADRs, <K> Specs"
-}
+### 3. Render Dedicated CLI Presentation
+Display the status directly to the user in the CLI using the Plannic TUI card:
+```text
+┌── Plannic Architecture Workbench ────────────────────────────┐
+│ Plan: <Title> (v1.0)                                         │
+│ Phase <active>/<total>: <Phase Title> [■■■■□□□□□□] <pct>%    │
+│ Tasks: <done>/<total> completed in active phase              │
+│ Linked: <N> ADR(s) • <M> Living Spec(s)                      │
+└──────────────────────────────────────────────────────────────┘
 ```
 
-### 4. Structure the "1 Plannic Plan" Content
-The artifact must contain:
-1. **Header & Metadata:**
-   ```markdown
-   # 📐 PLANNIC ARCHITECTURAL SPEC & EXECUTION PLAN: <Title>
-
-   > **Plan Slug:** `<slug>` | **Version:** `<version>` | **Status:** `<status>`  
-   > **Universal Plan Index:** [`.docs/plan-<slug>.md`](file:///D:/Project/Plannic/.docs/plan-<slug>.md)
-   ```
-2. **Document Grid:**
-   Table with direct clickable `file:///` links to all 5 documents in `.docs/`.
-3. **Linked ADRs & Living Specs:**
-   Summary of binding architectural decisions and data contracts.
-4. **Execution Roadmap (Phase Tasks):**
-   Render the checklist of tasks from `phase-<slug>.md` with `- [ ]` (todo) and `- [x]` (done).
-5. **Approval Callout:**
-   Notify the user that clicking **Proceed** in Antigravity will start execution.
+Optional: If the user specifically asks to export or create a file/artifact for this plan, write it with `RequestFeedback: false` so it acts purely as a readable reference document.
 
 ---
 
-## Execution Sync Protocol
-Once the user clicks **Proceed**:
-1. Begin execution of the pending tasks in Phase 1.
-2. After completing each task:
-   - Call MCP `move_task(slug, taskId, "done")` to persist progress in Git.
-   - Update `<appDataDir>/brain/<conversationId>/plannic_plan_<slug>.md` to mark `- [x]` in the Antigravity artifact.
-3. Keep Git and the Antigravity UI in 100% lockstep.
+## Execution Sync Loop
+When working on tasks under this plan:
+1. Implement the task.
+2. Advance progress via `move_task(slug, taskId, "done")`.
+3. Output the updated phase metrics.

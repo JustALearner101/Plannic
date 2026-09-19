@@ -39,6 +39,35 @@ import {
 import { appendHistory, appendSpecHistory } from "./history.js";
 import { readConfig } from "./config.js";
 
+function getSemanticDescription(
+  docType: DocType,
+  planName: string,
+  filename?: string,
+  customDescription?: string
+): string {
+  if (customDescription && customDescription.trim()) {
+    return customDescription.trim();
+  }
+
+  switch (docType) {
+    case "plan":
+      return `Executive summary, architectural goals, and document manifest for ${planName}`;
+    case "scope":
+      return `Explicit boundary definitions, inclusions, and invariants for ${planName}`;
+    case "feature":
+      return `Functional capabilities, technical breakdown, and acceptance criteria for ${planName}`;
+    case "phase": {
+      const match = filename ? filename.match(/phase-(\d+)/i) : null;
+      const phaseNum = match ? match[1] : "1";
+      return `Phase ${phaseNum} milestone deliverables, tasks, and verification checklist for ${planName}`;
+    }
+    case "limitation":
+      return `Architectural trade-offs, systemic risks, and known operational constraints for ${planName}`;
+    default:
+      return `Documentation for ${planName}`;
+  }
+}
+
 function makeDocFrontmatter(
   slug: string,
   planName: string,
@@ -46,7 +75,9 @@ function makeDocFrontmatter(
   title: string,
   now: string,
   mode?: PlanMode,
-  documents?: string[]
+  documents?: string[],
+  filename?: string,
+  customDescription?: string
 ): DocFrontmatter {
   return {
     id: crypto.randomUUID(),
@@ -59,7 +90,7 @@ function makeDocFrontmatter(
     created: now,
     lastUpdated: now,
     tags: [],
-    description: `${title} for ${planName}`,
+    description: getSemanticDescription(docType, planName, filename, customDescription),
     ...(mode ? { mode } : {}),
     ...(documents ? { documents } : {}),
   };
@@ -126,7 +157,16 @@ export async function initPlan(cwd: string, name: string, mode: PlanMode): Promi
   if (mode === "quick") {
     const rootFilename = "plan.md";
     const rootPath = path.join(planDir, rootFilename);
-    const frontmatter = makeDocFrontmatter(slug, name, "plan", name, now, "quick", [rootFilename]);
+    const frontmatter = makeDocFrontmatter(
+      slug,
+      name,
+      "plan",
+      name,
+      now,
+      "quick",
+      [rootFilename],
+      rootFilename
+    );
     const initialBody = `# ${name}\n\n## Overview\n\n## Implementation Details\n`;
     const content = matter.stringify(initialBody, frontmatter);
     await fs.writeFile(rootPath, content, "utf-8");
@@ -171,7 +211,9 @@ export async function initPlan(cwd: string, name: string, mode: PlanMode): Promi
         title,
         now,
         docConfig.type === "plan" ? "deep" : undefined,
-        docConfig.type === "plan" ? allFilenames : undefined
+        docConfig.type === "plan" ? allFilenames : undefined,
+        docConfig.filename,
+        docConfig.description
       );
 
       await fs.writeFile(filePath, matter.stringify(body, frontmatter), "utf-8");
@@ -198,6 +240,12 @@ export async function initPlan(cwd: string, name: string, mode: PlanMode): Promi
   };
 }
 
+export async function atomicWriteFile(filePath: string, content: string): Promise<void> {
+  const tmpPath = `${filePath}.tmp.${Date.now()}_${Math.random().toString(36).slice(2)}`;
+  await fs.writeFile(tmpPath, content, "utf-8");
+  await fs.rename(tmpPath, filePath);
+}
+
 export async function updateDocument(
   cwd: string,
   slug: string,
@@ -221,7 +269,7 @@ export async function updateDocument(
   data.lastUpdated = now;
 
   const newContent = matter.stringify(body, data);
-  await fs.writeFile(filePath, newContent, "utf-8");
+  await atomicWriteFile(filePath, newContent);
 
   // Log history
   const filename = path.basename(filePath);

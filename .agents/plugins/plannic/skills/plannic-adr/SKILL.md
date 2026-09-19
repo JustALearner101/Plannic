@@ -57,7 +57,7 @@ When the user asks to see existing ADRs or runs `/plannic-adr` without arguments
 
 Structure:
 ```markdown
-# 📜 Architecture Decision Records (ADRs)
+# Architecture Decision Records (ADRs)
 
 > Single Source of Truth for Architecture Choices & Trade-offs
 
@@ -65,12 +65,12 @@ Structure:
 
 | Number | Title | Status | Date | Core Decision |
 | :---: | :--- | :---: | :---: | :--- |
-| **#0001** | Use Tauri 2 for Desktop App | 🟢 `accepted` | 2026-09-16 | Lightweight native webview (<15MB) over Electron |
-| **#0002** | Use Bun as Primary Runtime | 🟢 `accepted` | 2026-09-16 | Native TypeScript execution & instant test runner |
+| **#0001** | Use Tauri 2 for Desktop App | `ACCEPTED` | 2026-09-16 | Lightweight native webview (<15MB) over Electron |
+| **#0002** | Use Bun as Primary Runtime | `ACCEPTED` | 2026-09-16 | Native TypeScript execution & instant test runner |
 
 ---
 
-### 💡 ADR Guidance
+### Guidelines
 - Decisions marked as `accepted` are binding. AI agents must respect them and not propose superseded alternatives.
 - To record a new decision, run:
   > `/plannic-adr <Decision Title>`

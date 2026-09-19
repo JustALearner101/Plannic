@@ -1,0 +1,1 @@
+{"taskId":"adr-superseding-lineage","condition":"baseline","plan":"Create a new ADR and mark the previous ADR as superseded in the file.","patch":""}

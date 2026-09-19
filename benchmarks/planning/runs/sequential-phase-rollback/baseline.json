@@ -1,0 +1,1 @@
+{"taskId":"sequential-phase-rollback","condition":"baseline","plan":"Change task status backward in the phase markdown file.","patch":""}
